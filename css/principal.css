@@ -1,0 +1,267 @@
+@charset "utf-8";
+@import url("zerarCss.css");
+
+button,
+a {
+	cursor: pointer;	
+}
+
+input, select {
+    vertical-align: middle;
+}
+
+button {
+	border-radius: 20px;
+	box-shadow: 1px 1px 3px #DDD;
+	color: #FFF;
+	font-weight: bold;
+	padding: 10px;
+	text-shadow: 1px 1px 1px #333;
+	background: linear-gradient(top, #89A 0%, #467 100%);
+	background: -webkit-linear-gradient(top, #89A 0%, #467 100%);
+	background: -moz-linear-gradient(top, #89A 0%, #467 100%);
+	background: -o-linear-gradient(top, #89A 0%, #467 100%);
+	background: -ms-linear-gradient(top, #89A 0%, #467 100%);
+}
+
+button:hover,
+button:focus {
+	background: #89A;
+}
+
+button:active {
+	text-shadow: 0 0 3px #89A;
+}
+
+button[disabled="disabled"] {
+	background: #888;
+	color: #EEE;
+	cursor: default;
+}
+
+h1 {
+	color: #48C;
+	font-size: 30px;
+	font-weight: bold;
+}
+
+input[type="text"],
+textarea {
+	background-color: #FFC;
+	border-color: #EEE;
+	border-width: 1px;
+	padding: 10px;
+	width: 200px;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+	border-color: #89A;
+}
+
+p strong {
+	color: inherit;
+	font-weight: bold;
+}
+
+p {
+	color: #555;
+}
+
+p.aceita {
+	color: #070;
+}
+
+p.rejeita {
+	color: #D00;
+}
+.navegacaoDeGramaticas {
+	display: box;
+	display: -webkit-box;
+	display: -moz-box;
+	display: -o-box;
+	display: -ms-box;
+	box-align: start;
+	-webkit-box-align: start;
+	-moz-box-align: start;
+	-o-box-align: start;
+	-ms-box-align: start;
+	box-direction: reverse;
+	-webkit-box-direction: reverse;
+	-moz-box-direction: reverse;
+	-o-box-direction: reverse;
+	-ms-box-direction: reverse;
+	box-orient: vertical;
+	-webkit-box-orient: vertical;
+	-moz-box-orient: vertical;
+	-o-box-orient: vertical;
+	-ms-box-orient: vertical;
+}
+
+.navegacaoDeGramaticas ul {
+	margin-top: 20px;	
+}
+
+.navegacaoDeGramaticas ul li {
+	padding: 10px;
+}
+
+.navegacaoDeGramaticas ul li,
+.navegacaoDeGramaticas ul li input {
+	background-color: #EEE;
+	border-color: #888;
+	border-bottom-width: 1px;
+	color: #888;
+	display: block;
+	width: 150px;
+}
+
+.navegacaoDeGramaticas ul li input {
+	background-color: #FFF;
+	border-color: #F00;
+	border-width: 1px;
+}
+
+.navegacaoDeGramaticas ul li:hover {
+	background-color: #FFC;
+}
+
+.navegacaoDeGramatica {
+	margin-top: 20px;
+}
+
+.navegacaoDeGramatica button:first-child {
+	margin-left: 0;
+}
+
+.navegacaoDeGramatica button {
+	margin-left: 10px;
+}
+
+.secaoDaGramatica {
+	margin-left: 100px;
+	box-flex: 1; 
+	-webkit-box-flex: 1;
+	-moz-box-flex: 1;
+	-o-box-flex: 1;
+	-ms-box-flex: 1;
+}
+
+.secaoDaGramatica h1 {
+	margin-bottom: 20px;
+}
+
+.secaoDaGramatica section h1 {
+	font-size: 20px;
+	margin-bottom: 20px;
+}
+
+.secaoDaGramatica section h2 {
+	color: #48C;
+	font-size: 15px;
+	font-weight: bold;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+.secaoDaGramatica dl {
+	width: 500px;
+}
+.secaoDaGramatica dl dt {
+	background-color: #89A;
+	color: #FFF;
+	float: left;
+	font-weight: bold;
+	margin-right: 10px;
+	padding: 5px;
+	width: 300px;
+}
+
+.secaoDaGramatica dl dd {
+	padding: 5px;
+	margin-bottom: 3px;
+}
+
+.containerDaGramatica {
+	border-color: #89A;
+	border-top-width: 2px;
+	display: box;
+	display: -webkit-box;
+	display: -moz-box;
+	display: -o-box;
+	display: -ms-box;
+	box-pack: start;
+	-webkit-box-pack: start;
+	-moz-box-pack: start;
+	-o-box-pack: start;
+	-ms-box-pack: start;
+	box-orient: horizontal;
+	-webkit-box-orient: horizontal;
+	-moz-box-orient: horizontal;
+	-o-box-orient: horizontal;
+	-ms-box-orient: horizontal;
+	margin-top: 30px;
+	margin-bottom: 30px;
+	padding-top: 30px;
+}
+
+.containerDaGramatica section {
+	margin-left: 50px;
+}
+
+.containerDaGramatica section:first-child {
+	margin-left: 0;
+}
+
+.containerGlobal {
+	display: box;
+	display: -webkit-box;
+	display: -moz-box;
+	display: -o-box;
+	display: -ms-box;
+	box-align: stretch;
+	-webkit-box-align: stretch;
+	-moz-box-align: stretch;
+	-o-box-align: stretch;
+	-ms-box-align: stretch;
+	box-orient: horizontal;
+	-webkit-box-orient: horizontal;
+	-moz-box-orient: horizontal;
+	-o-box-orient: horizontal;
+	-ms-box-orient: horizontal;
+	margin: 20px;
+}
+
+.mensagemDoSistema {
+	position: absolute;
+	right: 0;
+	text-align: right;
+	top: 0;
+	width: 400px;
+}
+
+.mensagemDoSistema p {
+	display: none;
+	margin-top: 20px;
+}
+
+.mensagemDoSistema p.sucesso {
+	display: block;
+	color: #070;
+}
+
+.mensagemDoSistema p.fracasso {
+	display: block;
+	color: #E00;
+}
+
+#codigoDaGramatica {
+	font-size: 20px;
+	font-family: "Courier New", monospace;
+	height: 300px;
+	width: 500px;
+}
+
+#listaDeGramaticas li.selecionado {
+	color: #777;
+	font-weight: bold;
+}

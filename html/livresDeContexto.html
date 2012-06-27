@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="stylesheet" type="text/css" href="../css/principal.css" />
+		<script type="text/javascript" src="../js/utilitarios.js"></script>
+		<script type="text/javascript" src="../js/controleDaVisao.js"></script>
+		<script type="text/javascript" src="../js/controleDoModelo.js"></script>
+		<script type="text/javascript" src="../js/livresDeContexto.js"></script>
+		<script type="text/javascript">
+			window.onload = ControleDaVisao.adicionarTratadores;
+		</script>
+		<title>Analisador sintático preditivo LL(1) para linguagens livres de contexto</title>
+	</head>
+	<body>
+		<div class="containerGlobal">
+			<nav class="navegacaoDeGramaticas">
+				<ul id="listaDeGramaticas"></ul>
+				<button id="botaoCriarGramatica">Criar gramática</button>
+			</nav>
+			<section class="secaoDaGramatica">
+				<h1 id="nomeDaGramatica">Gramática</h1>
+				<dl>
+					<dt>Fatorada</dt>
+					<dd id="gramaticaFatorada">Não</dd>
+					<dt>Recursão a esquerda</dt>
+					<dd id="gramaticaComRecursaoAEsquerda">Não</dd>
+					<dt>First(A) ∩ Follow(A) = φ ∀ A | A ⇒* ε ?</dt>
+					<dd id="gramaticaFirstUniaoFollow">Não</dd>
+				</dl>
+				<div class="containerDaGramatica">
+					<section>
+						<h1>Edição</h1>
+						<textarea id="codigoDaGramatica" placeholder="insira a gramática" spellcheck="false"></textarea>
+						<nav class="navegacaoDeGramatica">
+							<button id="botaoSalvarGramatica">Salvar</button>
+							<button id="botaoExcluirGramatica">Excluir</button>
+						</nav>
+					</section>
+					<section>
+						<h1>Reconhecimento</h1>
+						<input type="text" placeholder="insira a sentença" />
+						<button id="botaoReconhecerGramatica">Reconhecer</button>
+						<h2>Resultado</h2>
+						<p id="resultadoDoReconhecimento">Resultado do reconhecimento da sentença.</p>
+					</section>
+				</div>
+				<section>
+					<h1>Tabela de parsing</h1>
+					<table id="tabelaDeParsing"></table>
+				</section>
+			</section>
+			<section class="mensagemDoSistema">
+				<h1>Mensagens do sistema</h1>
+				<p id="caixaDeMensagens"></p>
+			</section>
+		</div>
+	</body>
+</html>
