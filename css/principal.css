@@ -157,15 +157,42 @@ p.rejeita {
 }
 
 .secaoDaGramatica section h2 {
-	color: #48C;
+	color: #247;
 	font-size: 15px;
 	font-weight: bold;
 	margin-top: 20px;
 	margin-bottom: 20px;
 }
-.secaoDaGramatica dl {
-	width: 500px;
+
+dl#listaDeFirsts,
+dl#listaDeFollows {
+	width: 200px;
 }
+
+dl#listaDeFirsts dt,
+dl#listaDeFollows dt {
+	text-align: center;
+	width: 50px;
+}
+
+dl#listaDeFirsts dd,
+dl#listaDeFollows dd {
+	color: #247;
+}
+
+dl#listaDeFirsts dd strong,
+dl#listaDeFollows dd strong {
+	font-weight: bold;
+}
+
+dl#listaDeFirsts dd strong {
+	color: #7A7;
+}
+
+dl#listaDeFollows dd strong {
+	color: #A77;
+}
+
 .secaoDaGramatica dl dt {
 	background-color: #89A;
 	color: #FFF;
@@ -183,7 +210,7 @@ p.rejeita {
 
 .containerDaGramatica {
 	border-color: #89A;
-	border-top-width: 2px;
+	border-width: 2px 0;
 	display: box;
 	display: -webkit-box;
 	display: -moz-box;
@@ -199,18 +226,40 @@ p.rejeita {
 	-moz-box-orient: horizontal;
 	-o-box-orient: horizontal;
 	-ms-box-orient: horizontal;
-	margin-top: 30px;
-	margin-bottom: 30px;
-	padding-top: 30px;
+	margin: 30px 0;
+	padding: 30px 0;
 }
 
 .containerDaGramatica section {
+	-webkit-box-flex: 1;
 	margin-left: 50px;
 }
 
 .containerDaGramatica section:first-child {
 	margin-left: 0;
 }
+
+.containerFirstEFollow {
+	display: box;
+	display: -webkit-box;
+	display: -moz-box;
+	display: -o-box;
+	display: -ms-box;
+	box-pack: start;
+	-webkit-box-pack: start;
+	-moz-box-pack: start;
+	-o-box-pack: start;
+	-ms-box-pack: start;
+	box-orient: horizontal;
+	-webkit-box-orient: horizontal;
+	-moz-box-orient: horizontal;
+	-o-box-orient: horizontal;
+	-ms-box-orient: horizontal;
+}
+
+.containerFirstEFollow h2 {
+	clear: both;
+}  
 
 .containerGlobal {
 	display: box;

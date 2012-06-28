@@ -4,11 +4,11 @@ var Gramaticas = {};
 
 var ControleDoModelo = {
 	/**
-	 * Função: criarGramatica
-	 * Parâmetros:
-	 *  - nome: nome da gramática que será criada.
-	 * Descrição: cria a gramática caso não exista nenhuma outra com o mesmo nome.
-	 */
+	* Função: criarGramatica
+	* Parâmetros:
+	* - nome: nome da gramática que será criada.
+	* Descrição: cria a gramática caso não exista nenhuma outra com o mesmo nome.
+	**/
 	criarGramatica: function(nome) {
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(nome, String));
 		var gramaticaFoiCriada = false;
@@ -20,65 +20,65 @@ var ControleDoModelo = {
 	},
 	
 	/**
-	 * Função: salvarGramatica
-	 * Parâmetros:
-	 *  - nome: nome da gramática que será salva.
-	 *  - codigo: gramática no formato textual que será transformado em um objeto.
-	 * Descrição: tenta salvar a gramática e criar uma tabela de parsing para ela.
-	 * Caso a gramática textual seja inválida, então a gramática não é salva.
-	 */
+	* Função: salvarGramatica
+	* Parâmetros:
+	* - nome: nome da gramática que será salva.
+	* - codigo: gramática no formato textual que será transformado em um objeto.
+	* Descrição: tenta salvar a gramática e criar uma tabela de parsing para ela.
+	* Caso a gramática textual seja inválida, então a gramática não é salva.
+	**/
 	salvarGramatica: function(nome, codigo) {
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(nome, String));
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(codigo, String));
 		var gramaticaFoiSalva = false;
 		var gramatica = Gramaticas[nome];
 		if (!Utilitarios.nuloOuIndefinido(gramatica)) {
-			 var gramaticaAnalisada = new AnalizadorDaGramatica(nome).construir(codigo);
-			 if (!Utilitarios.nulo(gramaticaAnalisada)) {
+			 var gramaticaSalva = new AnalizadorDaGramatica(nome).construir(codigo);
+			 if (!Utilitarios.nulo(gramaticaSalva)) {
 				 delete Gramaticas[nome];
-				 Gramaticas[nome] = gramaticaAnalisada;
+				 Gramaticas[nome] = gramaticaSalva;
 				 gramaticaFoiSalva = true;
-				 gramaticaAnalisada.firsts();
+				 gramaticaSalva.analisar();
 			 }
 		}
 		return gramaticaFoiSalva;
 	},
 	
 	/**
-	 * Função: fornecerGramaticas
-	 * Descrição: fornecer a lista das gramáticcas existentes.
-	 */
+	* Função: fornecerGramaticas
+	* Descrição: fornecer a lista das gramáticcas existentes.
+	**/
 	fornecerGramaticas: function() {
 		return Gramaticas;
 	}
 };
 
 /**
- * Classe: AnalizadorDaGramatica
- * Descrição: Classe responsável pro fazer a análise de uma gramática em formato
- * textual e converter para um objeto..
- */
+* Classe: AnalizadorDaGramatica
+* Descrição: Classe responsável pro fazer a análise de uma gramática em formato
+* textual e converter para um objeto..
+**/
 var AnalizadorDaGramatica = new Prototipo({
 	/**
-	 * Função: inicializar
-	 * Parâmetros:
-	 * 	- nome: nome da gramática onde será salvo o resultado da análise da gramática textual.
-	 * Descrição: inicializa um novo obtejo AnalizadorDeGramatica.
-	 */
+	* Função: inicializar
+	* Parâmetros:
+	* - nome: nome da gramática onde será salvo o resultado da análise da gramática textual.
+	* Descrição: inicializa um novo obtejo AnalizadorDeGramatica.
+	**/
 	inicializar: function(nome) {
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(nome, String));
 		this.gramatica = new Gramatica(nome);
 	},
 
 	/**
-	 * Função: construir
-	 * Parâmetros:
-	 * 	- codigo: gramática em formato textual que será convertido para um objeto.
-	 * Descrição: tenta construir a gramática a partir da equivalente textual fornecida.
-	 * Caso a gramática textual seja inválida, então retorna null e caso contrário retorna a gramática construída.
-	 */
+	* Função: construir
+	* Parâmetros:
+	* - codigo: gramática em formato textual que será convertido para um objeto.
+	* Descrição: tenta construir a gramática a partir da equivalente textual fornecida.
+	* Caso a gramática textual seja inválida, então retorna null e caso contrário retorna a gramática construída.
+	**/
 	construir: function(codigo) {
-		var producoes = codigo.replace(/\n/g, " -> ").split(" -> ");
+		var producoes = codigo.replace(/^\s+/, "").replace(/\s+$/, "").replace(/\n/g, " -> ").split(" -> ");
 		var simboloInicial = producoes[0];
 		var expressaoRegularTerminais = /^([a-z]*|[0-9]|[^A-Z])$/;
 		var expressaoRegularNaoTerminais = /^[A-Z]*$/;

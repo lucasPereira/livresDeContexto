@@ -23,10 +23,10 @@
 				<dl>
 					<dt>Fatorada</dt>
 					<dd id="gramaticaFatorada">Não</dd>
-					<dt>Recursão a esquerda</dt>
+					<dt>Recursão á esquerda</dt>
 					<dd id="gramaticaComRecursaoAEsquerda">Não</dd>
 					<dt>First(A) ∩ Follow(A) = φ ∀ A | A ⇒* ε ?</dt>
-					<dd id="gramaticaFirstUniaoFollow">Não</dd>
+					<dd id="gramaticaFirstInterseccaoFollowVazia">Não</dd>
 				</dl>
 				<div class="containerDaGramatica">
 					<section>
@@ -38,17 +38,28 @@
 						</nav>
 					</section>
 					<section>
+						<h1>Análise</h1>
+						<div class="containerFirstEFollow">
+							<div>
+								<h2>Firsts</h2>
+								<dl id="listaDeFirsts"></dl>
+							</div>
+							<div>
+								<h2>Follows</h2>
+								<dl id="listaDeFollows"></dl>
+							</div>
+						</div>
+						<h2>Tabela de parsing</h2>
+						<table id="tabelaDeParsing"></table>
+					</section>
+				</div>
+					<section>
 						<h1>Reconhecimento</h1>
 						<input type="text" placeholder="insira a sentença" />
 						<button id="botaoReconhecerGramatica">Reconhecer</button>
 						<h2>Resultado</h2>
 						<p id="resultadoDoReconhecimento">Resultado do reconhecimento da sentença.</p>
 					</section>
-				</div>
-				<section>
-					<h1>Tabela de parsing</h1>
-					<table id="tabelaDeParsing"></table>
-				</section>
 			</section>
 			<section class="mensagemDoSistema">
 				<h1>Mensagens do sistema</h1>
