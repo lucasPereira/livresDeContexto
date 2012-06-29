@@ -12,7 +12,7 @@ var Gramatica = new Prototipo({
 		this.follows = {};
 		this.tabelaDeParsing = {};
 		this.fatorada = false;
-		this.recursivaAEsquerda = false;
+		this.recursivaAEsquerda = true;
 		this.interseccaoDosFirstsEFollowsVazia = false;
 		this.adicionarTerminal("$");
 	},
@@ -24,6 +24,10 @@ var Gramatica = new Prototipo({
 	
 	fornecerCodigo: function() {
 		return this.codigo;
+	},
+	
+	codigoVazio: function() {
+		return this.codigo === "";
 	},
 	
 	fornecerNome: function() {
@@ -140,7 +144,27 @@ var Gramatica = new Prototipo({
 	},
 	
 	construirTabelaDeParsing: function() {
-		
+		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
+			this.tabelaDeParsing[simboloDoNaoTerminal] = {};
+			this.terminais.paraCada(function(terminal, simboloDoTerminal) {
+				if (!terminal.epsilon()) {
+					this.tabelaDeParsing[simboloDoNaoTerminal][simboloDoTerminal] = [];
+				}
+			}, this);
+		}, this);
+		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
+			naoTerminal.fornecerProducoes().paraCada(function(producao, indiceDaProducao) {
+				producao[0].fornecerFirsts().paraCada(function(firstDaProducao, simboloDoFirstDaProducao) {
+					if (!firstDaProducao.epsilon()) {
+						this.tabelaDeParsing[simboloDoNaoTerminal][simboloDoFirstDaProducao].push(producao); 
+					} else {
+						naoTerminal.fornecerFollows().paraCada(function(followDoNaoTerminal, simboloDoFollowDoNaoTerminal) {
+							this.tabelaDeParsing[simboloDoNaoTerminal][simboloDoFollowDoNaoTerminal].push(producao);
+						}, this);
+					}
+				}, this);
+			}, this);
+		}, this);
 	},
 	
 	estaFatorada: function() {
@@ -208,6 +232,9 @@ var NaoTerminal = new Prototipo({
 			}
 		}, this);
 		if (!combinou) {
+			simbolos.toString = function() {
+				return this.join(" ");
+			};
 			this.producoes.push(simbolos);
 		}
 		return !combinou;
@@ -363,6 +390,10 @@ var NaoTerminal = new Prototipo({
 	
 	epsilon: function() {
 		return false;
+	},
+	
+	toString: function() {
+		return this.simbolo;
 	}
 });
 
@@ -392,5 +423,9 @@ var Terminal = new Prototipo({
 	
 	epsilon: function() {
 		return (this.simbolo === "&");
+	},
+	
+	toString: function() {
+		return this.simbolo;
 	}
 });

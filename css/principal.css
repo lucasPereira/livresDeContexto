@@ -69,12 +69,15 @@ p {
 }
 
 p.aceita {
+/* 	color: #7A7; */
 	color: #070;
 }
 
 p.rejeita {
-	color: #D00;
+	color: #A77;
+	color: #E00;
 }
+
 .navegacaoDeGramaticas {
 	display: box;
 	display: -webkit-box;
@@ -230,6 +233,13 @@ dl#listaDeFollows dd strong {
 	padding: 30px 0;
 }
 
+section > section + section {
+	border-color: #89A;
+	border-width: 2px 0;
+	margin: 30px 0;
+	padding: 30px 0;
+}
+
 .containerDaGramatica section {
 	-webkit-box-flex: 1;
 	margin-left: 50px;
@@ -313,4 +323,17 @@ dl#listaDeFollows dd strong {
 #listaDeGramaticas li.selecionado {
 	color: #777;
 	font-weight: bold;
+}
+
+table {
+	border-collapse: separate;
+	border-spacing: 2px;
+}
+
+table td {
+	background-color: #F00;
+}
+
+table th {
+	background-color: #0F0;
 }

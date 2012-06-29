@@ -106,6 +106,87 @@ var ControleDaVisao = {
 			ControleDaVisao.mostrarFirsts(gramatica);
 			ControleDaVisao.mostrarFollows(gramatica);
 			ControleDaVisao.mostrarDetalhesDaGramatica(gramatica);
+			ControleDaVisao.mostrarInformacaoDaConstrucaoDaTabelaDeParsing(gramatica);
+			ControleDaVisao.mostrarTabelaDeParsing(gramatica);
+		}
+	},
+	
+	/**
+	* Função: mostrarTabelaDeParsing
+	* Parâmetros:
+	* - gramatica: gramática com a tabela de parsing que será mostrada.
+	* Descrição: mostra a tabela de parsing da gramática fornecida.
+	**/
+	mostrarTabelaDeParsing: function(gramatica) {
+		var tabelaDeParsing = gramatica.fornecerTabelaDeParsing();
+		var tabela = ControleDaVisao.elemento("tabelaDeParsing");
+		tabela.innerHTML = "";
+		var cabecalho = document.createElement("thead");
+		var corpo = document.createElement("tbody");
+		var linhaDeCabecalho = document.createElement("tr");
+		var terminais = {};
+		tabelaDeParsing.paraCada(function(linhaTopoDaPilhaNaoTerminal, chaveDoTopoDaPilha) {
+			var linhaDoTopoDaPilha = document.createElement("tr");
+			var colunhaDoTopoDaPilha = document.createElement("th");
+			colunhaDoTopoDaPilha.innerHTML = chaveDoTopoDaPilha;
+			linhaDoTopoDaPilha.appendChild(colunhaDoTopoDaPilha);
+			linhaTopoDaPilhaNaoTerminal.paraCada(function(colunaSimboloTerminal, chaveDoSimbolo) {
+				terminais[chaveDoSimbolo] = chaveDoSimbolo;
+				var colunaDoSimbolo = document.createElement("td");
+				colunaDoSimbolo.innerHTML = colunaSimboloTerminal.join(" | ");
+				linhaDoTopoDaPilha.appendChild(colunaDoSimbolo);
+			});
+			corpo.appendChild(linhaDoTopoDaPilha);
+		});
+		var colunhaDeCabecalho = document.createElement("th");
+		colunhaDeCabecalho.innerHTML = "TP";
+		linhaDeCabecalho.appendChild(colunhaDeCabecalho);
+		terminais.paraCada(function(terminal, simboloDoTerminal) {
+			colunhaDeCabecalho = document.createElement("th");
+			colunhaDeCabecalho.innerHTML = simboloDoTerminal;
+			linhaDeCabecalho.appendChild(colunhaDeCabecalho);
+		});
+		cabecalho.appendChild(linhaDeCabecalho);
+		tabela.appendChild(cabecalho);
+		tabela.appendChild(corpo);
+	},
+	
+	/**
+	* Função: mostrarInformacaoDaConstrucaoDaTabelaDeParsing
+	* Parâmetros:
+	* - gramatica: gramática com as informações da tabela de parsing que serão mostradas.
+	* Descrição: mostra informações da tabela de parsing, dizendo se foi possível ou não
+	* criar a tabela sem não determinismos.
+	**/
+	mostrarInformacaoDaConstrucaoDaTabelaDeParsing: function(gramatica) {
+		if (gramatica.codigoVazio()) {
+			ControleDaVisao.elemento("estadoDaTabelaDeParsing").setAttribute("class", "");
+			ControleDaVisao.elemento("estadoDaTabelaDeParsing").innerHTML = "Resultado da construção da tabela de parsing.";
+		} else {
+			var mensagemFatorada = (gramatica.fatorada) ? "" : "não está fatorada";
+			var mensagemRecursivaAEsquerda = (gramatica.recursivaAEsquerda) ? "possui recursão à esquerda" : "";
+			var mensagemInterseccaoDosFirstsEFollowsVazia = (gramatica.interseccaoDosFirstsEFollowsVazia) ? "" : "a intersecção dos firsts e follows de algum símbolo que deriva ε em zero ou mais passos não é vazia";
+			if (!gramatica.fatorada && gramatica.recursivaAEsquerda) {
+				if (gramatica.interseccaoDosFirstsEFollowsVazia) {
+					mensagemRecursivaAEsquerda = " e " + mensagemRecursivaAEsquerda;
+				} else {
+					mensagemRecursivaAEsquerda = ", " + mensagemRecursivaAEsquerda;
+				}
+			}
+			if ((!gramatica.fatorada || gramatica.recursivaAEsquerda) && !gramatica.interseccaoDosFirstsEFollowsVazia) {
+				mensagemInterseccaoDosFirstsEFollowsVazia = " e " + mensagemInterseccaoDosFirstsEFollowsVazia;
+			}
+			var mensagemSobreATabelaDeParsing = "";
+			if (!gramatica.fatorada || gramatica.recursivaAEsquerda || !gramatica.interseccaoDosFirstsEFollowsVazia) {
+				mensagemSobreATabelaDeParsing += "Não foi possível construir a tabela de parsing sem não determinismos. ";
+				mensagemSobreATabelaDeParsing += "A gramática não pode ser análisada pela técnica LL(1) pois, ";
+				mensagemSobreATabelaDeParsing += mensagemFatorada + mensagemRecursivaAEsquerda + mensagemInterseccaoDosFirstsEFollowsVazia + ".";
+				ControleDaVisao.elemento("estadoDaTabelaDeParsing").setAttribute("class", "rejeita");
+			} else {
+				mensagemSobreATabelaDeParsing = "A tabela de parsing foi construída com sucesso.";
+				ControleDaVisao.elemento("estadoDaTabelaDeParsing").setAttribute("class", "aceita");
+			}
+			ControleDaVisao.elemento("estadoDaTabelaDeParsing").innerHTML = mensagemSobreATabelaDeParsing;
 		}
 	},
 	
