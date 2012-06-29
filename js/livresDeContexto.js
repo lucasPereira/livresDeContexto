@@ -108,8 +108,8 @@ var Gramatica = new Prototipo({
 		this.calcularFirsts();
 		this.calcularFollows();
 		this.construirTabelaDeParsing();
-		this.estaFatorada();
 		this.possuiRecursaoAEsquerda();
+		this.estaFatorada();
 		this.possuiIntersecaoDosFirstsEFollowsVaiza();
 	},
 	
@@ -208,6 +208,8 @@ var NaoTerminal = new Prototipo({
 		this.producoes = [];
 		this.firsts = null;
 		this.follows = null;
+		this.recursivoAEsquerda = false;
+		this.receptoresDosFirsts = {};
 	},
 	
 	fornecerProducoes: function() {
@@ -242,7 +244,7 @@ var NaoTerminal = new Prototipo({
 	
 	fornecerFirsts: function() {
 		if (Utilitarios.nulo(this.firsts)) {
-			this.calcularFirsts();
+			this.calcularFirsts(this);
 		}
 		return this.firsts;
 	},
@@ -254,7 +256,7 @@ var NaoTerminal = new Prototipo({
 		return this.follows;
 	},
 	
-	calcularFirsts: function() {
+	calcularFirsts: function(receptorDosFirsts) {
 		if (Utilitarios.nulo(this.firsts)) {
 			this.firsts = {};
 			this.producoes.paraCada(function(producao, indiceDaProducao) {
@@ -264,7 +266,7 @@ var NaoTerminal = new Prototipo({
 					var anteriorDerivaEpsilon = false;
 					var firstsDoProximoSimbolo = {};
 					do {
-						firstsDoProximoSimbolo = proximoSimbolo.calcularFirsts();
+						firstsDoProximoSimbolo = proximoSimbolo.calcularFirsts(this);
 						anteriorDerivaEpsilon = proximoSimbolo.derivaEpsilonEmUmPasso();
 						firstsDoProximoSimbolo.paraCada(function(novoFirst, chaveDoNovoFirst) {
 							if (!novoFirst.epsilon() || proximoSimbolo.epsilon()) {
@@ -278,8 +280,31 @@ var NaoTerminal = new Prototipo({
 					}
 				}
 			}, this);
+			this.propagarFirsts();
+		} else {
+			this.recursivoAEsquerda = true;
+			this.receptoresDosFirsts[receptorDosFirsts.simbolo] = receptorDosFirsts;
 		}
 		return this.firsts;
+	},
+
+	propagarFirsts: function() {
+		this.receptoresDosFirsts.paraCada(function(receptorDosFirsts, simboloDoReceptorDosFirsts) {
+			receptorDosFirsts.adicionarFirsts(this.firsts);
+		}, this);
+	},
+
+	adicionarFirsts: function(novosFirsts) {
+		var adicionouNovosFirsts = false;
+		novosFirsts.paraCada(function(novoFirst, simboloDoNovoFirst) {
+			if (Utilitarios.nuloOuIndefinido(this.firsts[simboloDoNovoFirst])) {
+				adicionouNovosFirsts = true;
+				this.firsts[simboloDoNovoFirst] = novoFirst;
+			}
+		}, this);
+		if (adicionouNovosFirsts) {
+			this.propagarFirsts();
+		}
 	},
 	
 	propagarFollows: function() {
@@ -337,6 +362,7 @@ var NaoTerminal = new Prototipo({
 	},
 	
 	possuiRecursaoAEsquerda: function() {
+		/*
 		var recursivoAEsquerda = false;
 		this.producoes.paraCada(function(producao, indiceDaProducao) {
 			var indiceDoSimboloDaProducao = 0;
@@ -352,6 +378,8 @@ var NaoTerminal = new Prototipo({
 			}
 		}, this);
 		return recursivoAEsquerda;
+		*/
+		return this.recursivoAEsquerda;
 	},
 	
 	possuiInterseccaoDoFirstEFollowVazia: function() {
