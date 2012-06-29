@@ -110,59 +110,33 @@ var Gramatica = new Prototipo({
 	},
 	
 	calcularFirsts: function() {
-		var conjuntoDeFirsts = {};
 		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
-			naoTerminal.first(conjuntoDeFirsts);
-		});
-		this.firsts = conjuntoDeFirsts;
+			this.firsts[simboloDoNaoTerminal] = naoTerminal.fornecerFirsts();
+		}, this);
+		this.terminais.paraCada(function(terminal, simboloDoTerminal) {
+			this.firsts[simboloDoTerminal] = terminal.fornecerFirsts();
+		}, this);
 	},
 	
 	calcularFollows: function() {
-		var conjuntoDeFollows = {};
-		var tabelaDeFollows = {};
+		this.simboloInicial.adicionarFollows({"$": this.terminais["$"]});
 		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
-			conjuntoDeFollows[simboloDoNaoTerminal] = {};
-			tabelaDeFollows[simboloDoNaoTerminal] = {};
-		}, this);
-		conjuntoDeFollows[this.simboloInicial.simbolo]["$"] = this.terminais["$"];
-		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
-			naoTerminal.producoes.paraCada(function(producao, indiceDaProducao) {
-				var indiceDoSimbolo = 0;
-				while (indiceDoSimbolo < producao.length) {
-					var simboloAtualNaProducao = producao[indiceDoSimbolo];
-					if (++indiceDoSimbolo < producao.length && Utilitarios.instanciaDe(simboloAtualNaProducao, NaoTerminal)) {
-						var proximoSimboloNaProducao = producao[indiceDoSimbolo];
-						if (!proximoSimboloNaProducao.epsilon()) {
-							this.firsts[proximoSimboloNaProducao.simbolo].paraCada(function(first, simboloDoFirst) {
-								conjuntoDeFollows[simboloAtualNaProducao.simbolo][simboloDoFirst] = first;
-							});
+			naoTerminal.fornecerProducoes().paraCada(function(producao, indiceDaProducao) {
+				var indiceDoSimboloDaProducao = 0;
+				while (indiceDoSimboloDaProducao < producao.length) {
+					var simboloAtualDaProducao = producao[indiceDoSimboloDaProducao];
+					if (++indiceDoSimboloDaProducao < producao.length && Utilitarios.instanciaDe(simboloAtualDaProducao, NaoTerminal)) {
+						var proximoSimboloDaProducao = producao[indiceDoSimboloDaProducao];
+						if (!proximoSimboloDaProducao.epsilon()) {
+							simboloAtualDaProducao.adicionarFollows(proximoSimboloDaProducao.fornecerFirsts());
 						}
 					}
 				}
 			}, this);
 		}, this);
 		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
-			naoTerminal.producoes.paraCada(function(producao, indiceDaProducao) {
-				var encontrouUmNaoTerminalReceptor = false;
-				var encontrouUmTerminal = false;
-				var indiceDoSimboloDaProducao = producao.length - 1;
-				while (indiceDoSimboloDaProducao >= 0 && !encontrouUmNaoTerminalReceptor && !encontrouUmTerminal) {
-					var simboloDaProducao = producao[indiceDoSimboloDaProducao--];
-					if (Utilitarios.instanciaDe(simboloDaProducao, Terminal)) {
-						encontrouUmTerminal = true;
-					} else {
-						tabelaDeFollows[simboloDoNaoTerminal][simboloDaProducao.simbolo] = conjuntoDeFollows[simboloDoNaoTerminal];
-						if (Utilitarios.nuloOuIndefinido(this.firsts[simboloDaProducao.simbolo]["&"])) {
-							encontrouUmNaoTerminalReceptor = true;
-						}
-					}
-				}
-			}, this);
+			this.follows[simboloDoNaoTerminal] = naoTerminal.fornecerFollows();
 		}, this);
-		tabelaDeFollows.paraCada(function(fornecedorDosFollows, simboloDoFornecedorDosFollows) {
-			this.naoTerminais[simboloDoFornecedorDosFollows].follows(tabelaDeFollows, conjuntoDeFollows, this.naoTerminais);
-		}, this);
-		this.follows = conjuntoDeFollows;
 	},
 	
 	construirTabelaDeParsing: function() {
@@ -170,22 +144,35 @@ var Gramatica = new Prototipo({
 	},
 	
 	estaFatorada: function() {
+		this.fatorada = true;
+		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
+			if (!naoTerminal.estaFatorado()) {
+				this.fatorada = false;
+				return
+			}
+		}, this);
 		return this.fatorada;
 	},
 	
 	possuiRecursaoAEsquerda: function() {
-		var possuiNaoTerminalRecursivoAEsquerda = false;
+		this.recursivaAEsquerda = false;
 		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
 			if (naoTerminal.possuiRecursaoAEsquerda()) {
-				possuiNaoTerminalRecursivoAEsquerda = true;
+				this.recursivaAEsquerda = true;
 				return;
 			}
-		});
-		this.recursivaAEsquerda = possuiNaoTerminalRecursivoAEsquerda;
+		}, this);
 		return this.recursivaAEsquerda;
 	},
 	
 	possuiIntersecaoDosFirstsEFollowsVaiza: function() {
+		this.interseccaoDosFirstsEFollowsVazia = true;
+		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
+			if (!naoTerminal.possuiInterseccaoDoFirstEFollowVazia()) {
+				this.interseccaoDosFirstsEFollowsVazia = false;
+				return;
+			}
+		}, this);
 		return this.interseccaoDosFirstsEFollowsVazia;
 	}
 });
@@ -195,6 +182,12 @@ var NaoTerminal = new Prototipo({
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(simbolo, String));
 		this.simbolo = simbolo;
 		this.producoes = [];
+		this.firsts = null;
+		this.follows = null;
+	},
+	
+	fornecerProducoes: function() {
+		return this.producoes;
 	},
 	
 	adicionarProducao: function(simbolos) {
@@ -220,54 +213,100 @@ var NaoTerminal = new Prototipo({
 		return !combinou;
 	},
 	
-	first: function(conjuntoDeFirsts, simboloReceptor) {
-		var meuSimbolo = this.simbolo;
-		if (Utilitarios.nuloOuIndefinido(conjuntoDeFirsts[meuSimbolo])) {
-			conjuntoDeFirsts[meuSimbolo] = {};
+	fornecerFirsts: function() {
+		if (Utilitarios.nulo(this.firsts)) {
+			this.calcularFirsts();
+		}
+		return this.firsts;
+	},
+	
+	fornecerFollows: function() {
+		if (Utilitarios.nulo(this.follows)) {
+			return {};
+		}
+		return this.follows;
+	},
+	
+	calcularFirsts: function() {
+		if (Utilitarios.nulo(this.firsts)) {
+			this.firsts = {};
 			this.producoes.paraCada(function(producao, indiceDaProducao) {
 				var indiceDoSimbolo = 0;
 				var proximoSimbolo = producao[indiceDoSimbolo];
-				var simboloDoProximo = null;
-				var anteriorDerivaEpsilon = false;
-				do {
-					proximoSimbolo.first(conjuntoDeFirsts, meuSimbolo);
-					simboloDoProximo = proximoSimbolo.simbolo;
-					anteriorDerivaEpsilon = proximoSimbolo.derivaEpsilonEmUmPasso();
-					proximoSimbolo = producao[++indiceDoSimbolo];
-				} while (anteriorDerivaEpsilon && indiceDoSimbolo < producao.length);
-				if (anteriorDerivaEpsilon && indiceDoSimbolo === producao.length) {
-					conjuntoDeFirsts[meuSimbolo]["&"] = conjuntoDeFirsts[simboloDoProximo]["&"];
-				}
-			});
-		}
-		var receptor = conjuntoDeFirsts[simboloReceptor];
-		if (!Utilitarios.nuloOuIndefinido(receptor)) {
-			conjuntoDeFirsts[meuSimbolo].paraCada(function(meuFirst, chaveDoMeuFirst) {
-				if (!meuFirst.epsilon()) {
-					conjuntoDeFirsts[simboloReceptor][chaveDoMeuFirst] = meuFirst;
-				}
-			});
-		}
-	},
-	
-	follows: function(tabelaDeFollows, conjuntoDeFollows, naoTerminais, novosFollows) {
-		var difusaoInicial = Utilitarios.nuloOuIndefinido(novosFollows);
-		var ganhouNovosFollows = false;
-		if (!difusaoInicial) {
-			novosFollows.paraCada(function(novoFollow, chaveDoNovoFollow) {
-				if (Utilitarios.nuloOuIndefinido(conjuntoDeFollows[this.simbolo][chaveDoNovoFollow])) {
-					conjuntoDeFollows[this.simbolo][chaveDoNovoFollow] = novoFollow;
-					ganhouNovosFollows = true;
+				if (proximoSimbolo !== this) {
+					var anteriorDerivaEpsilon = false;
+					var firstsDoProximoSimbolo = {};
+					do {
+						firstsDoProximoSimbolo = proximoSimbolo.calcularFirsts();
+						anteriorDerivaEpsilon = proximoSimbolo.derivaEpsilonEmUmPasso();
+						firstsDoProximoSimbolo.paraCada(function(novoFirst, chaveDoNovoFirst) {
+							if (!novoFirst.epsilon() || proximoSimbolo.epsilon()) {
+								this.firsts[chaveDoNovoFirst] = novoFirst;
+							}
+						}, this);
+						proximoSimbolo = producao[++indiceDoSimbolo];
+					} while (anteriorDerivaEpsilon && indiceDoSimbolo < producao.length);
+					if (anteriorDerivaEpsilon && indiceDoSimbolo === producao.length) {
+						this.firsts["&"] = firstsDoProximoSimbolo["&"];
+					}
 				}
 			}, this);
 		}
-		if (difusaoInicial || ganhouNovosFollows) {
-			if (!Utilitarios.nuloOuIndefinido(tabelaDeFollows[this.simbolo])) {
-				tabelaDeFollows[this.simbolo].paraCada(function(receptorDosFollows, simboloDoReceptorDosFollows) {
-					naoTerminais[simboloDoReceptorDosFollows].follows(tabelaDeFollows, conjuntoDeFollows, naoTerminais, conjuntoDeFollows[this.simbolo]);
-				}, this);
+		return this.firsts;
+	},
+	
+	propagarFollows: function() {
+		this.producoes.paraCada(function(producao, indiceDaProducao) {
+			var encontrouOUltimoNaoTerminalReceptor = false;
+			var encontrouUmTerminal = false;
+			var indiceDoSimboloDaProducao = producao.length - 1;
+			while (indiceDoSimboloDaProducao >= 0 && !encontrouOUltimoNaoTerminalReceptor && !encontrouUmTerminal) {
+				var simboloDaProducao = producao[indiceDoSimboloDaProducao--];
+				if (Utilitarios.instanciaDe(simboloDaProducao, Terminal)) {
+					encontrouUmTerminal = true;
+				} else {
+					simboloDaProducao.adicionarFollows(this.follows);
+					if (!simboloDaProducao.derivaEpsilonEmZeroOuMaisPassos()) {
+						encontrouOUltimoNaoTerminalReceptor = true;
+					}
+				}
 			}
+		}, this);
+	},
+	
+	adicionarFollows: function(novosFollows) {
+		if (Utilitarios.nulo(this.follows)) {
+			this.follows = {};
 		}
+		var adicionouNovosFollows = false;
+		novosFollows.paraCada(function(novoFollow, simboloDoNovoFollow) {
+			if (Utilitarios.nuloOuIndefinido(this.follows[simboloDoNovoFollow]) && !novoFollow.epsilon()) {
+				adicionouNovosFollows = true;
+				this.follows[simboloDoNovoFollow] = novoFollow;
+			}
+		}, this);
+		if (adicionouNovosFollows) {
+			this.propagarFollows();
+		}
+	},
+	
+	estaFatorado: function() {
+		this.fornecerFirsts();
+		var firstsDasProducoes = {};
+		var fatorado = true;
+		this.producoes.paraCada(function(producao, indiceDaProducao) {
+			producao[0].fornecerFirsts().paraCada(function(firstDaProducao, simboloDoFirstDaProducao) {
+				if (Utilitarios.nuloOuIndefinido(firstsDasProducoes[simboloDoFirstDaProducao])) {
+					if (!firstDaProducao.epsilon()) {
+						firstsDasProducoes[simboloDoFirstDaProducao] = firstDaProducao;
+					}
+				} else {
+					fatorado = false;
+					return
+				}
+			});
+		});
+		return fatorado;
 	},
 	
 	possuiRecursaoAEsquerda: function() {
@@ -281,36 +320,34 @@ var NaoTerminal = new Prototipo({
 					antecessoresDerivamEpsilon = simboloDaProducao.derivaEpsilonEmZeroOuMaisPassos();
 				} else {
 					recursivoAEsquerda = true;
+					return;
 				}
-			}
-			if (recursivoAEsquerda) {
-				return;
 			}
 		}, this);
 		return recursivoAEsquerda;
 	},
 	
-	derivaEpsilonEmZeroOuMaisPassos: function(origens) {
-		if (Utilitarios.nuloOuIndefinido(origens)) {
-			origens = {};
-		}
-		origens[this.simbolo] = this;
-		var derivaEpsilon = false;
-		this.producoes.paraCada(function(producao, indiceDaProducao) {
-			var todosDerivam = true;
-			producao.paraCada(function(simboloDaProducao, indiceDoSimboloDaProducao) {
-				if (Utilitarios.nuloOuIndefinido(origens[simboloDaProducao.simbolo])) {
-					todosDerivam = simboloDaProducao.derivaEpsilonEmZeroOuMaisPassos(origens) && todosDerivam;
-				} else {
-					todosDerivam = false;
+	possuiInterseccaoDoFirstEFollowVazia: function() {
+		var interseccaoDoFirstEFollowVazia = true;
+		if (this.derivaEpsilonEmZeroOuMaisPassos()) {
+			this.fornecerFirsts().paraCada(function(first, simboloDoFirst) {
+				if (!Utilitarios.nuloOuIndefinido(this.fornecerFollows()[simboloDoFirst])) {
+					interseccaoDoFirstEFollowVazia = false;
+					return;
 				}
-			});
-			if (todosDerivam) {
-				derivaEpsilon = true;
-				return;
-			}
-		});
-		return derivaEpsilon;
+			}, this);
+			this.fornecerFollows().paraCada(function(follow, simboloDoFollow) {
+				if (!Utilitarios.nuloOuIndefinido(this.fornecerFirsts()[simboloDoFollow])) {
+					interseccaoDoFirstEFollowVazia = false;
+					return;
+				}
+			}, this);
+		}
+		return interseccaoDoFirstEFollowVazia;
+	},
+	
+	derivaEpsilonEmZeroOuMaisPassos: function() {
+		return (!Utilitarios.nuloOuIndefinido(this.fornecerFirsts()["&"]));
 	},
 	
 	derivaEpsilonEmUmPasso: function() {
@@ -335,17 +372,14 @@ var Terminal = new Prototipo({
 		this.simbolo = simbolo;
 	},
 	
-	first: function(conjuntoDeFirsts, simboloReceptor) {
-		var meuSimbolo = this.simbolo;
-		if (Utilitarios.nuloOuIndefinido(conjuntoDeFirsts[meuSimbolo])) {
-			var meuConjuntoDeFirsts = {};
-			meuConjuntoDeFirsts[meuSimbolo] = this;
-			conjuntoDeFirsts[meuSimbolo] = meuConjuntoDeFirsts;
-		}
-		var receptor = conjuntoDeFirsts[simboloReceptor];
-		if (!Utilitarios.nuloOuIndefinido(receptor)) {
-			conjuntoDeFirsts[simboloReceptor][meuSimbolo] = this;
-		}
+	fornecerFirsts: function() {
+		return this.calcularFirsts();
+	},
+	
+	calcularFirsts: function() {
+		var firsts = {};
+		firsts[this.simbolo] = this;
+		return firsts;
 	},
 	
 	derivaEpsilonEmZeroOuMaisPassos: function() {
