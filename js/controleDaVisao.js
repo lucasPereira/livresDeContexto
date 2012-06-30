@@ -40,6 +40,21 @@ var ControleDaVisao = {
 			}
 		};
 	},
+	
+	/**
+	* Função: excluirGramatica
+	* Descrição: excluir a gramática selecionada.
+	**/
+	excluirGramatica: function() {
+		ControleDoModelo.excluirGramatica(ControleDaVisao.gramaticaSelecionada);
+		if (ControleDaVisao.gramaticaSelecionada == "minhaGramatica") {
+			ControleDaVisao.mostrarMensagem("informativo", "A gramática <strong>minhaGramatica</strong> não pode ser excluída. Ela foi apenas limpa.");
+			ControleDoModelo.criarGramatica("minhaGramatica");
+		} else {
+			ControleDaVisao.mostrarMensagem("sucesso", "Gramática <strong>" + ControleDaVisao.gramaticaSelecionada + "</strong> excluída.");
+		}
+		ControleDaVisao.mostrarGramaticas();
+	},
 
 	/**
 	* Função: salvarGramatica
@@ -79,7 +94,11 @@ var ControleDaVisao = {
 			itemDeListaDaGramatica.onclick = selecionarGramatica;
 			listaDeGramaticas.insertBefore(itemDeListaDaGramatica, listaDeGramaticas.firstChild);
 		});
-		ControleDaVisao.mostrarGramatica(ControleDaVisao.gramaticaSelecionada);
+		if (Utilitarios.nuloOuIndefinido(ControleDaVisao.gramaticaSelecionada) || Utilitarios.nuloOuIndefinido(gramaticas[ControleDaVisao.gramaticaSelecionada])) {
+			ControleDaVisao.mostrarGramatica("minhaGramatica");
+		} else {
+			ControleDaVisao.mostrarGramatica(ControleDaVisao.gramaticaSelecionada);
+		}
 	},
 	
 	/**
@@ -317,6 +336,7 @@ var ControleDaVisao = {
 	adicionarTratadores: function() {
 		ControleDaVisao.elemento("botaoSalvarGramatica").onclick = ControleDaVisao.salvarGramatica;
 		ControleDaVisao.elemento("botaoCriarGramatica").onclick = ControleDaVisao.criarGramatica;
+		ControleDaVisao.elemento("botaoExcluirGramatica").onclick = ControleDaVisao.excluirGramatica;
 		ControleDaVisao.elemento("caixaDeMensagens").onclick = ControleDaVisao.limparMensagem;
 		if (ControleDoModelo.criarGramatica("minhaGramatica")) {
 			ControleDaVisao.gramaticaSelecionada = "minhaGramatica";

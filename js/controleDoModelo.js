@@ -20,6 +20,17 @@ var ControleDoModelo = {
 	},
 	
 	/**
+	* Função: excluirGramatica
+	* Parâmetros:
+	* - nome: nome da gramática que será excluida.
+	* Descrição: exclui a gramática caso exista.
+	**/
+	excluirGramatica: function(nome) {
+		Utilitarios.assegureQue(Utilitarios.instanciaDe(nome, String));
+		delete Gramaticas[nome];
+	},
+	
+	/**
 	* Função: salvarGramatica
 	* Parâmetros:
 	* - nome: nome da gramática que será salva.

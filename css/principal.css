@@ -51,7 +51,7 @@ textarea {
 	border-color: #EEE;
 	border-width: 1px;
 	padding: 10px;
-	width: 200px;
+	width: 150px;
 }
 
 input[type="text"]:focus,
@@ -169,7 +169,7 @@ p.rejeita {
 
 dl#listaDeFirsts,
 dl#listaDeFollows {
-	width: 200px;
+	width: 180px;
 }
 
 dl#listaDeFirsts dt,
@@ -313,6 +313,11 @@ section > section + section {
 	color: #E00;
 }
 
+.mensagemDoSistema p.informativo {
+	display: block;
+	color: #00A;
+}
+
 #codigoDaGramatica {
 	font-size: 20px;
 	font-family: "Courier New", monospace;
@@ -328,12 +333,25 @@ section > section + section {
 table {
 	border-collapse: separate;
 	border-spacing: 2px;
+	margin-top: 20px;
+	width: 100%;
+}
+
+table td,
+table th {
+	border: #000 1px;
+/* 	min-width: 100px; */
+	padding: 5px;
+	text-align: center;
 }
 
 table td {
-	background-color: #F00;
+	background-color: #EEE;
+	color: #888;
 }
 
 table th {
-	background-color: #0F0;
+	background-color: #89A;
+	color: #FFF;
+	font-weight: bold;
 }
