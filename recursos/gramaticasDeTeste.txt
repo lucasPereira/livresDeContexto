@@ -1,0 +1,19 @@
+PROG -> DECL COM
+DECL -> dec DECL | &
+COM -> com COM | &
+
+E -> E + T | E - T | T
+T -> T * F | T / F | F
+F -> ( E ) | id
+
+E -> T EL
+EL -> + T EL | &
+T -> F TL
+TL -> * F TL | &
+F -> ( E ) | id
+
+S -> a S | &
+
+A -> B a | c
+B -> A b | d
+
