@@ -127,6 +127,7 @@ p.rejeita {
 
 .navegacaoDeGramaticas ul li:hover {
 	background-color: #FFC;
+	cursor: pointer;
 }
 
 .navegacaoDeGramatica {
@@ -303,17 +304,17 @@ section > section + section {
 	margin-top: 20px;
 }
 
-.mensagemDoSistema p.sucesso {
+p.sucesso {
 	display: block;
 	color: #070;
 }
 
-.mensagemDoSistema p.fracasso {
+p.fracasso {
 	display: block;
 	color: #E00;
 }
 
-.mensagemDoSistema p.informativo {
+p.informativo {
 	display: block;
 	color: #00A;
 }
@@ -340,7 +341,6 @@ table {
 table td,
 table th {
 	border: #000 1px;
-/* 	min-width: 100px; */
 	padding: 5px;
 	text-align: center;
 }

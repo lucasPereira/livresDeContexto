@@ -1,6 +1,17 @@
 "use strict";
 
+/**
+* Classe: Gramatica
+* Descrição: Classe responsável pelo gerenciamento da gramática. 
+* Cria a tabela de parsing e reconhece sentenças. 
+**/
 var Gramatica = new Prototipo({
+	/**
+	* Função: inicializar
+	* Parâmetros:
+	* - nome: nome da gramática que será inicializada.
+	* Descrição: inicializa uma nova gramática utilizando o nome especificado.
+	*/
 	inicializar: function(nome) {
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(nome, String));
 		this.nome = nome;
@@ -17,35 +28,71 @@ var Gramatica = new Prototipo({
 		this.adicionarTerminal("$");
 	},
 	
+	/**
+	* Função: fixarCodigo
+	* Parâmetros:
+	* - codigo: código que será atribuído à gramática.
+	* Descrição: atribui o código especificado à gramática.
+	**/
 	fixarCodigo: function(codigo) {
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(codigo, String));
 		this.codigo = codigo;
 	},
 	
+	/**
+	* Função: fornecerCodigo
+	* Descrição: retorna o código da gramática.
+	**/
 	fornecerCodigo: function() {
 		return this.codigo;
 	},
 	
+	/**
+	* Função: codigoVazio
+	* Descrição: verifica se o código da gramática é vazio.
+	**/
 	codigoVazio: function() {
 		return this.codigo === "";
 	},
 	
+	/**
+	* Função: fornecerNome
+	* Descrição: retorna o nome da gramática.
+	**/
 	fornecerNome: function() {
 		return this.nome;
 	},
 	
+	/**
+	* Função: fornecerFirsts
+	* Descrição: retorna o conjunto de firsts da gramática.
+	**/
 	fornecerFirsts: function() {
 		return this.firsts;
 	},
 	
+	/**
+	* Função: fornecerFollows
+	* Descrição: retorna o conjunto de follows da gramática.
+	**/
 	fornecerFollows: function() {
 		return this.follows;
 	},
 	
+	/**
+	* Função: fornecerTabelaDeParsing
+	* Descrição: retorna a tabela de parsing da gramática.
+	**/
 	fornecerTabelaDeParsing: function() {
 		return this.tabelaDeParsing;
 	},
 	
+	/**
+	* Função: fixarSimboloInicial
+	* Parâmetros:
+	* - simbolo: símbolo inicial que será atribuído à gramática
+	* Descrição: atribui o símbolo inicial especificado à gramática
+	**/
 	fixarSimboloInicial: function(simbolo) {
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(simbolo, String));
 		var naoTerminal = this.naoTerminais[simbolo];
@@ -53,11 +100,23 @@ var Gramatica = new Prototipo({
 		this.simboloInicial = naoTerminal;
 	},
 	
+	/**
+	* Função: fornecerNaoTerminal
+	* Parâmetros:
+	* - simbolo: símbolo que se deseja obter o objeto correspondente.
+	* Descrição: retorna o objeto do não terminal com nome = simbolo.
+	**/
 	fornecerNaoTerminal: function(simbolo) {
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(simbolo, String));
 		return this.naoTerminais[simbolo];
 	},
 	
+	/**
+	* Função: adicionarTerminal
+	* Parâmetros:
+	* - simbolo: símbolo identificador do terminal que se deseja adicionar.
+	* Descrição: adiciona um novo símbolo terminal à gramática.
+	**/
 	adicionarTerminal: function(simbolo) {
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(simbolo, String));
 		Utilitarios.assegureQue(Utilitarios.nuloOuIndefinido(this.naoTerminais[simbolo]));
@@ -69,6 +128,12 @@ var Gramatica = new Prototipo({
 		return adicionou;
 	},
 	
+	/**
+	* Função: adicionarNaoTerminal
+	* Parâmetros:
+	* - simbolo: símbolo identificador do não terminal que se deseja adicionar.
+	* Descrição: adiciona um novo símbolo não terminal à gramática.
+	**/
 	adicionarNaoTerminal: function(simbolo) {
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(simbolo, String));
 		Utilitarios.assegureQue(Utilitarios.nuloOuIndefinido(this.terminais[simbolo]));
@@ -84,6 +149,15 @@ var Gramatica = new Prototipo({
 		return adicionou;
 	},
 	
+	/**
+	* Função: adicionarProducao
+	* Parâmetros:
+	*  - simboloNaoTerminal: símbolo identificador do não terminal que deriva a produção.
+	*  - simbolosDaProducao: símbolos que serão derivados na produção. 
+	* Descrição: adiciona uma nova produção do não terminal especificado por
+	* simboloNaoTerminal derivando os símbolos especificados por
+	* simbolosDaProducao.
+	**/
 	adicionarProducao: function(simboloNaoTerminal, simbolosDaProducao) {
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(simboloNaoTerminal, String));
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(simbolosDaProducao, Array));
@@ -104,6 +178,10 @@ var Gramatica = new Prototipo({
 		return false;
 	},
 	
+	/**
+	* Função: analisar
+	* Descrição: verifica se a gramática é LL(1).
+	**/
 	analisar: function() {
 		this.calcularFirsts();
 		this.calcularFollows();
@@ -113,6 +191,10 @@ var Gramatica = new Prototipo({
 		this.possuiIntersecaoDosFirstsEFollowsVaiza();
 	},
 	
+	/**
+	* Função: calcularFirsts
+	* Descrição: calcula os firsts da gramática, calculando os firsts de cada não terminal.
+	**/
 	calcularFirsts: function() {
 		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
 			this.firsts[simboloDoNaoTerminal] = naoTerminal.fornecerFirsts();
@@ -122,6 +204,10 @@ var Gramatica = new Prototipo({
 		}, this);
 	},
 	
+	/**
+	* Função: calcularFollows
+	* Descrição: calcula os follows da gramática, calculando os follows de cada não terminal.
+	**/
 	calcularFollows: function() {
 		this.simboloInicial.adicionarFollows({"$": this.terminais["$"]});
 		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
@@ -143,6 +229,10 @@ var Gramatica = new Prototipo({
 		}, this);
 	},
 	
+	/**
+	* Função: construirTabelaDeParsing
+	* Descrição: constrói a tabela de parsing LL(1) da gramática.
+	**/
 	construirTabelaDeParsing: function() {
 		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
 			this.tabelaDeParsing[simboloDoNaoTerminal] = {};
@@ -167,6 +257,11 @@ var Gramatica = new Prototipo({
 		}, this);
 	},
 	
+	/**
+	* Função: estaFatorada
+	* Descrição: verifica se a gramática está fatorada, verificando se cada símbolo 
+	* não terminal está fatorado.
+	**/
 	estaFatorada: function() {
 		this.fatorada = true;
 		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
@@ -178,6 +273,11 @@ var Gramatica = new Prototipo({
 		return this.fatorada;
 	},
 	
+	/**
+	* Função: possuiRecursaoAEsquerda
+	* Descrição: verifica se a gramática possui recursão à esquerda, 
+	* verificando se cada símbolo não terminal possui recursão à esquerda
+	**/
 	possuiRecursaoAEsquerda: function() {
 		this.recursivaAEsquerda = false;
 		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
@@ -189,6 +289,10 @@ var Gramatica = new Prototipo({
 		return this.recursivaAEsquerda;
 	},
 	
+	/**
+	* Função: possuiIntersecaoDosFirstsEFollowsVazia
+	* Descrição: verifica se First(A) ^ Follow(A) = & para todo A | A =>* &
+	**/
 	possuiIntersecaoDosFirstsEFollowsVaiza: function() {
 		this.interseccaoDosFirstsEFollowsVazia = true;
 		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
@@ -198,10 +302,128 @@ var Gramatica = new Prototipo({
 			}
 		}, this);
 		return this.interseccaoDosFirstsEFollowsVazia;
+	},
+	
+	
+	/**
+	* Funcao: reconhecer
+	* Descrição: verifica se uma dada sentença é faz parte da linguagem 
+	* especificada pela gramática. 
+	**/
+	reconhecer: function(sentenca) {
+		Utilitarios.assegureQue(Utilitarios.instanciaDe(sentenca, String));
+		var resposta = new RespostaDeReconhecimento(sentenca);
+		if (this.fatorada && !this.recursivaAEsquerda && this.interseccaoDosFirstsEFollowsVazia) {
+			var estadoDeErro = false;
+			var pilha = [];
+			var topoDaPilha = null; 
+			var simboloAtual = null;
+			pilha.push(this.terminais["$"], this.simboloInicial);
+			if (sentenca === "") {
+				sentenca = [];
+			} else {
+				sentenca = sentenca.split(" ");
+			}
+			sentenca.push("$");
+			simboloAtual = sentenca[0];
+			while (pilha.length > 0 && sentenca.length > 0 && !estadoDeErro) {
+				topoDaPilha = pilha.pop();
+				if (Utilitarios.instanciaDe(topoDaPilha, NaoTerminal)) {
+					var novoTopo = this.tabelaDeParsing[topoDaPilha.simbolo][simboloAtual];
+					if (!Utilitarios.nuloOuIndefinido(novoTopo) && novoTopo.length === 1) {
+						novoTopo = novoTopo[0].reverse();
+						pilha.push.apply(pilha, novoTopo);
+						novoTopo.reverse();
+					} else {
+						estadoDeErro = true;
+					}
+				} else {
+					if (!topoDaPilha.epsilon()) {
+						if (topoDaPilha.simbolo === simboloAtual) {
+							sentenca.shift();
+							simboloAtual = sentenca[0];
+						} else {
+							estadoDeErro = true;
+						}
+					}
+				}
+			}
+			if (!estadoDeErro && pilha.length === 0 && sentenca.length === 0) {
+				resposta.reconhecer();
+			} else {
+				resposta.naoReconhecer(true, topoDaPilha, simboloAtual);
+			}
+		} else {
+			resposta.naoReconhecer(false);
+		}
+		return resposta;
 	}
 });
 
+/**
+* Classe: ResopostaDeReconhecimento
+* Descrição: classe que agrega o resultado do reconhecimento 
+* de uma sentença em uma determinada gramática.
+**/
+var RespostaDeReconhecimento = new Prototipo({
+	/**
+	* Funcao: inicializar
+	* Parâmetros:
+	* - sentenca: sentenca que foi submetida ao reconhecimento.
+	* Descrição: inicializa os dados a resposta.
+	**/
+	inicializar: function(sentenca) {
+		this.sentenca = sentenca;
+		this.reconheceu = false;
+		this.tabelaDeParsingDeterministica = true;
+		this.simboloEsperado = null;
+		this.simboloRecebido = null;
+	},
+	
+	/**
+	* Função: reconhecer
+	* Descrição: resposta de uma sentença que foi reconhecida por uma gramática.
+	**/
+	reconhecer: function() {
+		this.reconheceu = true;
+		this.tabelaDeParsingDeterministica = true;
+		this.simboloEsperado = null;
+	},
+	
+	/**
+	* Função: reconhecer
+	* Parâmetros:
+	* - tabelaDeParsingDeterministica: indica se a gramática é LL(1).
+	* - simboloEsperado: o símbolo que era esperado no momento em que a sentença foi invalidada.
+	* - simboloRecebido: o símbolo fez a sentença ser inválidada.
+	* Descrição: resposta de uma sentença não foi reconhecida por uma gramática, ou
+	* porque a gramática não é LL(1) ou porque a sentença não faz parte da linguagem
+	* especificada pela gramática.
+	**/
+	naoReconhecer: function(tabelaDeParsingDeterministica, simboloEsperado, simboloRecebido) {
+		this.reconheceu = false;
+		this.tabelaDeParsingDeterministica = tabelaDeParsingDeterministica;
+		if (tabelaDeParsingDeterministica) {
+			this.simboloEsperado = simboloEsperado;
+			this.simboloRecebido = simboloRecebido;
+		} else {
+			this.simboloEsperado = null;
+			this.simboloRecebido = null;
+		}
+	},
+});
+
+/**
+* Classe: NaoTerminal
+* Descrição: classe responsável por representar um símbolo não terminal de uma gramática. 
+**/
 var NaoTerminal = new Prototipo({
+	/**
+	* Função: inicializar
+	* Parâmetros:
+	* - simbolo: simbolo do não terminal que será inicializado.
+	* Descrição: inicializa um novo símbolo não terminal utilizando o símbolo especificado.
+	**/
 	inicializar: function(simbolo) {
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(simbolo, String));
 		this.simbolo = simbolo;
@@ -212,10 +434,21 @@ var NaoTerminal = new Prototipo({
 		this.receptoresDosFirsts = {};
 	},
 	
+	/**
+	* Função: fornecerProducoes
+	* Descrição: retorna o conjunto de produções do não terminal.
+	**/	
 	fornecerProducoes: function() {
 		return this.producoes;
 	},
 	
+	/**
+	* Função: adicionarProducao.
+	* Parâmetros:
+	* - simbolos: símbolos que serão derivados na producão.
+	* Descrição: adiciona uma produção derivando os símbolos especificados por simbolos
+	* ao não terminal.
+	**/
 	adicionarProducao: function(simbolos) {
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(simbolos, Array));
 		var combinou = false;
@@ -242,6 +475,10 @@ var NaoTerminal = new Prototipo({
 		return !combinou;
 	},
 	
+	/**
+	* Função: fornecerFirsts
+	* Descrição: retorna o conjunto first do não terminal.
+	**/
 	fornecerFirsts: function() {
 		if (Utilitarios.nulo(this.firsts)) {
 			this.calcularFirsts(this);
@@ -249,6 +486,10 @@ var NaoTerminal = new Prototipo({
 		return this.firsts;
 	},
 	
+	/**
+	* Função: fornecerFollows
+	* Descrição: retorna o conjunto follow do não terminal.
+	**/
 	fornecerFollows: function() {
 		if (Utilitarios.nulo(this.follows)) {
 			return {};
@@ -256,6 +497,13 @@ var NaoTerminal = new Prototipo({
 		return this.follows;
 	},
 	
+	/**
+	* Função: calcularFirsts
+	* Parâmetros:
+	* - receptorDosFirsts: conjunto que armazenará os símbolos first calculados.
+	* Descrição: calcula o conjunto first do não terminal, já fazendo a verificação
+	* se existe recursão à esquerda.
+	**/
 	calcularFirsts: function(receptorDosFirsts) {
 		if (Utilitarios.nulo(this.firsts)) {
 			this.firsts = {};
@@ -288,12 +536,24 @@ var NaoTerminal = new Prototipo({
 		return this.firsts;
 	},
 
+	/**
+	* Função: propagarFirsts
+	* Descrição: caso o símbolo tenha o seu conjunto de firsts atualizado, então
+	* ele propagará os seus firsts para os símbolos que possuem como firsts os firsts desse NaoTerminal.
+	* Essa função será usada sempre quando houver recursão à esquerda ou um ciclo na gramática.
+	**/
 	propagarFirsts: function() {
 		this.receptoresDosFirsts.paraCada(function(receptorDosFirsts, simboloDoReceptorDosFirsts) {
 			receptorDosFirsts.adicionarFirsts(this.firsts);
 		}, this);
 	},
 
+	/**
+	* Função: adicionarFirsts
+	* Parâmetros:
+	* - novosFirsts: conjunto com os novos firts a serem adicionados
+	* Descrição: adiciona ao conjunto first os símbolos de novosFirsts
+	**/
 	adicionarFirsts: function(novosFirsts) {
 		var adicionouNovosFirsts = false;
 		novosFirsts.paraCada(function(novoFirst, simboloDoNovoFirst) {
@@ -307,6 +567,11 @@ var NaoTerminal = new Prototipo({
 		}
 	},
 	
+	/**
+	* Função: propagarFirsts
+	* Descrição: caso o símbolo tenha o seu conjunto de follows atualizado, então
+	* ele propagará os seus follows para os símbolos que possuem como follows os follows desse NaoTerminal.
+	**/
 	propagarFollows: function() {
 		this.producoes.paraCada(function(producao, indiceDaProducao) {
 			var encontrouOUltimoNaoTerminalReceptor = false;
@@ -325,7 +590,13 @@ var NaoTerminal = new Prototipo({
 			}
 		}, this);
 	},
-	
+
+	/**
+	* Função: adicionarFollows
+	* Parâmetros:
+	*  - novosFollows: conjunto com os novos follows a serem adicionados.
+	* Descrição: adiciona ao conjunto follow os símbolos de novosFollows.
+	**/
 	adicionarFollows: function(novosFollows) {
 		if (Utilitarios.nulo(this.follows)) {
 			this.follows = {};
@@ -342,6 +613,10 @@ var NaoTerminal = new Prototipo({
 		}
 	},
 	
+	/**
+	* Função: estaFatorado
+	* Descrição: verifica se o símbolo não terminal está fatorado.
+	**/
 	estaFatorado: function() {
 		this.fornecerFirsts();
 		var firstsDasProducoes = {};
@@ -361,27 +636,35 @@ var NaoTerminal = new Prototipo({
 		return fatorado;
 	},
 	
+	/**
+	* Função: possuiRecursaoAEsquerda
+	* Descrição: verifica se o símbolo não terminal possui recursão à esquerda
+	**/
 	possuiRecursaoAEsquerda: function() {
-		/*
-		var recursivoAEsquerda = false;
-		this.producoes.paraCada(function(producao, indiceDaProducao) {
-			var indiceDoSimboloDaProducao = 0;
-			var antecessoresDerivamEpsilon = true;
-			while (indiceDoSimboloDaProducao < producao.length && antecessoresDerivamEpsilon && !recursivoAEsquerda) {
-				var simboloDaProducao = producao[indiceDoSimboloDaProducao++];
-				if (simboloDaProducao !== this) {
-					antecessoresDerivamEpsilon = simboloDaProducao.derivaEpsilonEmZeroOuMaisPassos();
-				} else {
-					recursivoAEsquerda = true;
-					return;
+		if (!this.recursivoAEsquerda) {
+			var recursivoAEsquerda = false;
+			this.producoes.paraCada(function(producao, indiceDaProducao) {
+				var indiceDoSimboloDaProducao = 0;
+				var antecessoresDerivamEpsilon = true;
+				while (indiceDoSimboloDaProducao < producao.length && antecessoresDerivamEpsilon && !recursivoAEsquerda) {
+					var simboloDaProducao = producao[indiceDoSimboloDaProducao++];
+					if (simboloDaProducao !== this) {
+						antecessoresDerivamEpsilon = simboloDaProducao.derivaEpsilonEmZeroOuMaisPassos();
+					} else {
+						recursivoAEsquerda = true;
+						return;
+					}
 				}
-			}
-		}, this);
-		return recursivoAEsquerda;
-		*/
+			}, this);
+			this.recursivoAEsquerda = recursivoAEsquerda;
+		}
 		return this.recursivoAEsquerda;
 	},
 	
+	/**
+	* Função: possuiIntersecaoDosFirstsEFollowsVazia
+	* Descrição: verifica se First(A) ^ Follow(A) = & para o não terminal.
+	**/
 	possuiInterseccaoDoFirstEFollowVazia: function() {
 		var interseccaoDoFirstEFollowVazia = true;
 		if (this.derivaEpsilonEmZeroOuMaisPassos()) {
@@ -401,10 +684,18 @@ var NaoTerminal = new Prototipo({
 		return interseccaoDoFirstEFollowVazia;
 	},
 	
+	/**
+	* Função: derivaEpsilonEmZeroOuMaisPassos
+	* Descrição: verifica se o não terminal deriva & em zero ou mais passos.
+	**/
 	derivaEpsilonEmZeroOuMaisPassos: function() {
 		return (!Utilitarios.nuloOuIndefinido(this.fornecerFirsts()["&"]));
 	},
 	
+	/**
+	* Função: derivaEpsilonEmUmPasso
+	* Descrição: verifica se o não terminal deriva & em um passo.
+	**/
 	derivaEpsilonEmUmPasso: function() {
 		var derivaEpsilon = false;
 		this.producoes.paraCada(function(producao, indiceDaProducao) {
@@ -416,44 +707,87 @@ var NaoTerminal = new Prototipo({
 		return derivaEpsilon;
 	},
 	
+	/**
+	* Função: epsilon
+	* Descrição: verifica se o símbolo é o terminal epsilpon. Como este símbo é um NaoTerminal, 
+	* então essa função sempre retornará falso.
+	**/
 	epsilon: function() {
 		return false;
 	},
 	
+	/**
+	* Função: toString
+	* Descrição: retorna o string correspondente ao não terminal.
+	**/
 	toString: function() {
 		return this.simbolo;
 	}
 });
 
+/**
+* Classe: NaoTerminal
+* Descrição: classe responsável por representar um símbolo terminal de uma gramática. 
+**/
 var Terminal = new Prototipo({
+	/**
+	* Função: inicializar
+	* Parâmetros:
+	*  - simbolo: simbolo do terminal que será inicializado.
+	* Descrição: inicializa um novo símbolo terminal utilizando o símbolo especificado.
+	**/
 	inicializar: function(simbolo) {
 		Utilitarios.assegureQue(Utilitarios.instanciaDe(simbolo, String));
 		this.simbolo = simbolo;
 	},
 	
+	/**
+	* Função: fornecerFirsts
+	* Descrição: retorna o conjunto first do terminal.
+	**/
 	fornecerFirsts: function() {
 		return this.calcularFirsts();
 	},
 	
+	/**
+	* Função: calcularFirsts
+	* Descrição: calcula o conjunto first do terminal.
+	**/
 	calcularFirsts: function() {
 		var firsts = {};
 		firsts[this.simbolo] = this;
 		return firsts;
 	},
 	
+	/**
+	* Função: derivaEpsilonEmZeroOuMaisPassos
+	* Descrição: verifica se o terminal deriva & em zero ou mais passos.
+	**/
 	derivaEpsilonEmZeroOuMaisPassos: function() {
 		return this.epsilon();
 	},
 	
+	/**
+	* Função: derivaEpsilonEmUmPasso
+	* Descrição: verifica se o terminal deriva & em um passo.
+	**/
 	derivaEpsilonEmUmPasso: function() {
 		return false;
 	},
 	
+	/**
+	* Função: epsilon
+	* Descrição: verifica se o símbolo não terminal é &.
+	**/
 	epsilon: function() {
 		return (this.simbolo === "&");
 	},
 	
-	toString: function() {
+	/**
+	* Função: toString
+	* Descrição: retorna o string correspondente ao terminal.
+	**/
+	toString: function() {	
 		return this.simbolo;
 	}
 });

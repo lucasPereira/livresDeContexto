@@ -73,6 +73,34 @@ var ControleDaVisao = {
 	},
 	
 	/**
+	* Função: reconhecerSentenca
+	* Descrição: verifica se uma dada gramática reconhece uma determinada sentença.
+	**/
+	reconhecerSentenca: function() {
+		var sentenca = ControleDaVisao.elemento("campoSentenca").value;
+		var resposta = ControleDoModelo.reconhecerSentenca(ControleDaVisao.gramaticaSelecionada, sentenca);
+		var resultadoDoReconhecimento = ControleDaVisao.elemento("resultadoDoReconhecimento");
+		if (sentenca === "") {
+			sentenca = "ε";
+		}
+		if (resposta.reconheceu) {
+			resultadoDoReconhecimento.setAttribute("class", "sucesso");
+			resultadoDoReconhecimento.innerHTML = "A sentenca <strong>" + sentenca + "</strong> foi reconhecida.";
+		} else {
+			resultadoDoReconhecimento.setAttribute("class", "fracasso");
+			if (resposta.tabelaDeParsingDeterministica) {
+				resultadoDoReconhecimento.innerHTML = "A sentença <strong>" + sentenca + 
+					"</strong> não foi reconhecida. Era esperado o símbolo <strong>" + resposta.simboloEsperado + 
+					"</strong>, mas o símbolo recebido foi <strong>" + resposta.simboloRecebido + 
+					"</strong>,";
+			} else {
+				resultadoDoReconhecimento.setAttribute("class", "informativo");
+				resultadoDoReconhecimento.innerHTML = "Não é possível efetuar o reconhecimento da sentença pois a gramática não pode ser análisada pela técnica LL(1).";
+			}
+		}
+	},
+	
+	/**
 	* Função: mostrarGramaticas
 	* Descrição: mostra todas as gramáticas na lista de gramáticas.
 	**/
@@ -108,6 +136,10 @@ var ControleDaVisao = {
 	* Descrição: mostra a gramática e seus detalhes.
 	**/
 	mostrarGramatica: function(nomeDaGramatica) {
+		ControleDaVisao.elemento("campoSentenca").value = "";
+		ControleDaVisao.elemento("campoSentenca").setAttribute("value", "");
+		ControleDaVisao.elemento("resultadoDoReconhecimento").setAttribute("class", "");
+		ControleDaVisao.elemento("resultadoDoReconhecimento").innerHTML = "Resultado do reconhecimento da sentença.";
 		var itemDeListaDaGramaticaAntiga = ControleDaVisao.elemento(ControleDaVisao.gramaticaSelecionada);
 		if (!Utilitarios.nuloOuIndefinido(itemDeListaDaGramaticaAntiga)) {
 			itemDeListaDaGramaticaAntiga.setAttribute("class", "");
@@ -282,7 +314,7 @@ var ControleDaVisao = {
 		ControleDaVisao.elemento("botaoCriarGramatica").setAttribute("disabled", "disabled");
 		ControleDaVisao.elemento("botaoSalvarGramatica").setAttribute("disabled", "disabled");
 		ControleDaVisao.elemento("botaoExcluirGramatica").setAttribute("disabled", "disabled");
-		ControleDaVisao.elemento("botaoReconhecerGramatica").setAttribute("disabled", "disabled");
+		ControleDaVisao.elemento("botaoReconhecerSentenca").setAttribute("disabled", "disabled");
 	},
 	
 	/**
@@ -293,7 +325,7 @@ var ControleDaVisao = {
 		ControleDaVisao.elemento("botaoCriarGramatica").removeAttribute("disabled");
 		ControleDaVisao.elemento("botaoSalvarGramatica").removeAttribute("disabled");
 		ControleDaVisao.elemento("botaoExcluirGramatica").removeAttribute("disabled");
-		ControleDaVisao.elemento("botaoReconhecerGramatica").removeAttribute("disabled");
+		ControleDaVisao.elemento("botaoReconhecerSentenca").removeAttribute("disabled");
 	},
 	
 	/**
@@ -337,6 +369,7 @@ var ControleDaVisao = {
 		ControleDaVisao.elemento("botaoSalvarGramatica").onclick = ControleDaVisao.salvarGramatica;
 		ControleDaVisao.elemento("botaoCriarGramatica").onclick = ControleDaVisao.criarGramatica;
 		ControleDaVisao.elemento("botaoExcluirGramatica").onclick = ControleDaVisao.excluirGramatica;
+		ControleDaVisao.elemento("botaoReconhecerSentenca").onclick = ControleDaVisao.reconhecerSentenca;
 		ControleDaVisao.elemento("caixaDeMensagens").onclick = ControleDaVisao.limparMensagem;
 		if (ControleDoModelo.criarGramatica("minhaGramatica")) {
 			ControleDaVisao.gramaticaSelecionada = "minhaGramatica";

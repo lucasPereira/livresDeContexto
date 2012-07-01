@@ -1,5 +1,9 @@
 "use strict";
 
+/**
+* Biblioteca: Utilitarios
+* Descricao: fornece funções utilitárias que facilitam o uso do JavaSciprt.  
+**/
 var Utilitarios = { 
 	tipoFuncao: "function",
 	tipoObjeto: "object",
@@ -134,80 +138,5 @@ var ExcecaoUtilitarios = new Prototipo({
 	
 	toString: function() {
 		return this.comoTexto();
-	}
-});
-
-var RequisicaoJson = new Prototipo({
-	inicializar: function(uri) {
-		Utilitarios.checarTiposDeArgumentos([uri], [String], "Tipo de argumento inválido. Argumento deve ser: [Texto].");
-		this.uri = uri;
-		this.requisicaoXml = new XMLHttpRequest();
-		this.funcaoDeTratamentoDaResposta = null;
-		this.ultimaResposta = null;
-	},
-	
-	enviar: function(metodo, dados, assincrono) {
-		var metodosSuportados = ["GET", "PUT", "POST", "DELETE"];
-		if (assincrono === undefined) {
-			assincrono = false;
-		}
-		Utilitarios.checarTipoDeArgumentos([metodo, dados, assincrono], [String, Object, Boolean], "Tipo de argumento inválido. Argumentos devem ser: [Texto] [ObjetoJson] [Boleano].");
-		Utilitarios.checarArgumentoDentroDeValores(metodo, metodosSuportados, "Argumento inválido. Argumento[0] deve ser um método HTTP.");
-		this.requisicaoXml.open(metodo, this.uri, assincrono);
-		if (!assincrono) {
-			this.requisicaoXml.send(dados);
-			this.ultimaResposta = this.requisicaoXml.responseText;
-			return this.fornecerResposta();
-		} else {
-			this.requisicaoXml.onload = (function() {
-				this.ultimaResposta = this.requisicaoXml.responseText;
-				if (!Utilitarios.nuloOuIndefinido(this.funcaoDeTratamentoDaResposta)) {
-					this.funcaoDeTratamentoDaResposta(this.fornecerResposta());
-				}
-			}).vincularEscopo(this);
-			this.requisicaoXml.send(dados);
-			return this;
-		}
-	},
-	
-	enviarGet: function(dados, assincrono) {
-		return this.enviar("GET", dados, assincrono);
-	},
-	
-	enviarPut: function(dados, assincrono) {
-		return this.enviar("PUT", dados, assincrono);
-	},
-	
-	enviarPost: function(dados, assincrono) {
-		return this.enviar("POST", dados, assincrono);
-	},
-	
-	envirDelete: function(dados, assincrono) {
-		return this.enviar("DELETE", dados, assincrono);
-	},
-	
-	fixarFuncaoDeTratamentoDaResposta: function(funcaoDeTratamento, escopo) {
-		Utilitarios.checarTipoDeArgumentos([funcaoDeTratamento], [Function], "Tipo de argumento inválido. Argumentos devem ser: [Função] [Objeto].");
-		if (!Utilitarios.nuloOuIndefinido(escopo)) {
-			this.funcaoDeTratamento = funcaoDeTratamento.vincularEscopo(escopo);
-		}
-		this.funcaoDeTratamentoDaResposta = funcaoDeTratamento;
-		return this;
-	},
-	
-	fixarAtributoDeCabecalho: function(nome, valor) {
-		var atributosPossiveis = ["Content-Type"];
-		Utilitarios.checarTiposDeArgumentos([nome, valor], [String, String], "Tipo de argumento inválido. Argumentos devem ser: [String] [String].");
-		Utilitarios.checarArgumentoDentroDeValores(nome, atributosPossiveis, "Argumento inválido. Argumento[0] deve ser um atributo HTTP.");
-		this.requisicaoXml.setRequestHeader(nome, valor);
-		return this;
-	},
-	
-	fornecerResposta: function() {
-		try {
-			return JSON.parse(this.ultimaResposta);
-		} catch (excecao) {
-			return this.ultimaResposta;
-		}
 	}
 });

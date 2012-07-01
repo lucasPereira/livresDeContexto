@@ -61,13 +61,28 @@ var ControleDoModelo = {
 	**/
 	fornecerGramaticas: function() {
 		return Gramaticas;
+	},
+	
+	/**
+	* Função: reconhecerSentenca
+	* Parâmetros:
+	* - nomeDaGramatica: nome da gramática que efetuará o reconhecimento.
+	* - sentenca: sentença a ser reconhecida.
+	* Descrição: verifica se uma sentença é reconhecida por determinada gramática.
+	**/
+	reconhecerSentenca: function(nomeDaGramatica, sentenca) {
+		Utilitarios.assegureQue(Utilitarios.instanciaDe(nomeDaGramatica, String));
+		Utilitarios.assegureQue(Utilitarios.instanciaDe(sentenca, String));
+		var gramatica = Gramaticas[nomeDaGramatica];
+		Utilitarios.assegureQue(!Utilitarios.nuloOuIndefinido(gramatica));
+		return gramatica.reconhecer(sentenca);
 	}
 };
 
 /**
 * Classe: AnalizadorDaGramatica
 * Descrição: Classe responsável pro fazer a análise de uma gramática em formato
-* textual e converter para um objeto..
+* textual e converter para um objeto.
 **/
 var AnalizadorDaGramatica = new Prototipo({
 	/**
