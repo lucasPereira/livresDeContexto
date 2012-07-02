@@ -216,10 +216,14 @@ var Gramatica = new Prototipo({
 				while (indiceDoSimboloDaProducao < producao.length) {
 					var simboloAtualDaProducao = producao[indiceDoSimboloDaProducao];
 					if (++indiceDoSimboloDaProducao < producao.length && Utilitarios.instanciaDe(simboloAtualDaProducao, NaoTerminal)) {
-						var proximoSimboloDaProducao = producao[indiceDoSimboloDaProducao];
-						if (!proximoSimboloDaProducao.epsilon()) {
-							simboloAtualDaProducao.adicionarFollows(proximoSimboloDaProducao.fornecerFirsts());
-						}
+						var indiceDoSimboloDaProducaoSalvo = indiceDoSimboloDaProducao;
+						do {
+							var proximoSimboloDaProducao = producao[indiceDoSimboloDaProducao];
+							if (!proximoSimboloDaProducao.epsilon()) {
+								simboloAtualDaProducao.adicionarFollows(proximoSimboloDaProducao.fornecerFirsts());
+							}
+						} while (++indiceDoSimboloDaProducao < producao.length && Utilitarios.instanciaDe(simboloAtualDaProducao, NaoTerminal) && proximoSimboloDaProducao.derivaEpsilonEmZeroOuMaisPassos());
+						indiceDoSimboloDaProducao = indiceDoSimboloDaProducaoSalvo;
 					}
 				}
 			}, this);
@@ -244,15 +248,21 @@ var Gramatica = new Prototipo({
 		}, this);
 		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
 			naoTerminal.fornecerProducoes().paraCada(function(producao, indiceDaProducao) {
-				producao[0].fornecerFirsts().paraCada(function(firstDaProducao, simboloDoFirstDaProducao) {
-					if (!firstDaProducao.epsilon()) {
-						this.tabelaDeParsing[simboloDoNaoTerminal][simboloDoFirstDaProducao].push(producao); 
-					} else {
-						naoTerminal.fornecerFollows().paraCada(function(followDoNaoTerminal, simboloDoFollowDoNaoTerminal) {
-							this.tabelaDeParsing[simboloDoNaoTerminal][simboloDoFollowDoNaoTerminal].push(producao);
-						}, this);
-					}
-				}, this);
+				var indice = 0;
+				var firstsAvaliados = [];
+				do {
+					producao[indice].fornecerFirsts().paraCada(function(firstDaProducao, simboloDoFirstDaProducao) {
+						if (!firstDaProducao.epsilon() && !firstsAvaliados.contem(simboloDoFirstDaProducao)) {
+							firstsAvaliados.push(simboloDoFirstDaProducao);
+							this.tabelaDeParsing[simboloDoNaoTerminal][simboloDoFirstDaProducao].push(producao); 
+						} 
+					}, this);
+				} while (producao[indice++].derivaEpsilonEmZeroOuMaisPassos() && indice < producao.length);
+				if (indice === producao.length && producao[--indice].derivaEpsilonEmZeroOuMaisPassos()) {
+					naoTerminal.fornecerFollows().paraCada(function(followDoNaoTerminal, simboloDoFollowDoNaoTerminal) {
+						this.tabelaDeParsing[simboloDoNaoTerminal][simboloDoFollowDoNaoTerminal].push(producao);
+					}, this);
+				}
 			}, this);
 		}, this);
 	},
@@ -510,7 +520,7 @@ var NaoTerminal = new Prototipo({
 			this.producoes.paraCada(function(producao, indiceDaProducao) {
 				var indiceDoSimbolo = 0;
 				var proximoSimbolo = producao[indiceDoSimbolo];
-				if (proximoSimbolo !== this) {
+//				if (proximoSimbolo !== this) {
 					var anteriorDerivaEpsilon = false;
 					var firstsDoProximoSimbolo = {};
 					do {
@@ -522,15 +532,15 @@ var NaoTerminal = new Prototipo({
 							}
 						}, this);
 						proximoSimbolo = producao[++indiceDoSimbolo];
-					} while (anteriorDerivaEpsilon && indiceDoSimbolo < producao.length);
+					} while ((anteriorDerivaEpsilon) && indiceDoSimbolo < producao.length);
 					if (anteriorDerivaEpsilon && indiceDoSimbolo === producao.length) {
 						this.firsts["&"] = firstsDoProximoSimbolo["&"];
 					}
-				}
+//				}
 			}, this);
 			this.propagarFirsts();
 		} else {
-			this.recursivoAEsquerda = true;
+//			this.recursivoAEsquerda = true;
 			this.receptoresDosFirsts[receptorDosFirsts.simbolo] = receptorDosFirsts;
 		}
 		return this.firsts;
@@ -641,7 +651,7 @@ var NaoTerminal = new Prototipo({
 	* Descrição: verifica se o símbolo não terminal possui recursão à esquerda
 	**/
 	possuiRecursaoAEsquerda: function() {
-		if (!this.recursivoAEsquerda) {
+//		if (!this.recursivoAEsquerda) {
 			var recursivoAEsquerda = false;
 			this.producoes.paraCada(function(producao, indiceDaProducao) {
 				var indiceDoSimboloDaProducao = 0;
@@ -657,7 +667,7 @@ var NaoTerminal = new Prototipo({
 				}
 			}, this);
 			this.recursivoAEsquerda = recursivoAEsquerda;
-		}
+//		}
 		return this.recursivoAEsquerda;
 	},
 	
@@ -704,7 +714,7 @@ var NaoTerminal = new Prototipo({
 				return;
 			}
 		});
-		return derivaEpsilon || this.derivaEpsilonEmZeroOuMaisPassos();
+		return (derivaEpsilon || this.derivaEpsilonEmZeroOuMaisPassos());
 	},
 	
 	/**

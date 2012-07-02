@@ -92,7 +92,7 @@ var ControleDaVisao = {
 				resultadoDoReconhecimento.innerHTML = "A sentença <strong>" + sentenca + 
 					"</strong> não foi reconhecida. Era esperado o símbolo <strong>" + resposta.simboloEsperado + 
 					"</strong>, mas o símbolo recebido foi <strong>" + resposta.simboloRecebido + 
-					"</strong>,";
+					"</strong>.";
 			} else {
 				resultadoDoReconhecimento.setAttribute("class", "informativo");
 				resultadoDoReconhecimento.innerHTML = "Não é possível efetuar o reconhecimento da sentença pois a gramática não pode ser análisada pela técnica LL(1).";
