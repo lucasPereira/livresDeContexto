@@ -704,7 +704,7 @@ var NaoTerminal = new Prototipo({
 				return;
 			}
 		});
-		return derivaEpsilon;
+		return derivaEpsilon || this.derivaEpsilonEmZeroOuMaisPassos();
 	},
 	
 	/**

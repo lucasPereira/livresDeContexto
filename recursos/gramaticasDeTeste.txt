@@ -6,6 +6,16 @@ E -> E + T | E - T | T
 T -> T * F | T / F | F
 F -> ( E ) | id
 
+P -> D C
+D -> T V
+T -> type T | &
+V -> var V | &
+C -> begin D ; C end | com C | &
+
+S -> if E then T else S | if E then S | com
+T -> if E then T else T | com
+E -> exp
+
 E -> T EL
 EL -> + T EL | &
 T -> F TL
