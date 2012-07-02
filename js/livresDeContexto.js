@@ -440,8 +440,8 @@ var NaoTerminal = new Prototipo({
 		this.producoes = [];
 		this.firsts = null;
 		this.follows = null;
-		this.recursivoAEsquerda = false;
 		this.receptoresDosFirsts = {};
+		this.verificandoSeDerivaEpsilon = false;
 	},
 	
 	/**
@@ -520,27 +520,24 @@ var NaoTerminal = new Prototipo({
 			this.producoes.paraCada(function(producao, indiceDaProducao) {
 				var indiceDoSimbolo = 0;
 				var proximoSimbolo = producao[indiceDoSimbolo];
-//				if (proximoSimbolo !== this) {
 					var anteriorDerivaEpsilon = false;
 					var firstsDoProximoSimbolo = {};
 					do {
 						firstsDoProximoSimbolo = proximoSimbolo.calcularFirsts(this);
-						anteriorDerivaEpsilon = proximoSimbolo.derivaEpsilonEmUmPasso();
+						anteriorDerivaEpsilon = proximoSimbolo.derivaEpsilonEmZeroOuMaisPassos();
 						firstsDoProximoSimbolo.paraCada(function(novoFirst, chaveDoNovoFirst) {
 							if (!novoFirst.epsilon() || proximoSimbolo.epsilon()) {
 								this.firsts[chaveDoNovoFirst] = novoFirst;
 							}
 						}, this);
 						proximoSimbolo = producao[++indiceDoSimbolo];
-					} while ((anteriorDerivaEpsilon) && indiceDoSimbolo < producao.length);
+					} while (anteriorDerivaEpsilon && indiceDoSimbolo < producao.length);
 					if (anteriorDerivaEpsilon && indiceDoSimbolo === producao.length) {
 						this.firsts["&"] = firstsDoProximoSimbolo["&"];
 					}
-//				}
 			}, this);
 			this.propagarFirsts();
 		} else {
-//			this.recursivoAEsquerda = true;
 			this.receptoresDosFirsts[receptorDosFirsts.simbolo] = receptorDosFirsts;
 		}
 		return this.firsts;
@@ -651,24 +648,21 @@ var NaoTerminal = new Prototipo({
 	* Descrição: verifica se o símbolo não terminal possui recursão à esquerda
 	**/
 	possuiRecursaoAEsquerda: function() {
-//		if (!this.recursivoAEsquerda) {
-			var recursivoAEsquerda = false;
-			this.producoes.paraCada(function(producao, indiceDaProducao) {
-				var indiceDoSimboloDaProducao = 0;
-				var antecessoresDerivamEpsilon = true;
-				while (indiceDoSimboloDaProducao < producao.length && antecessoresDerivamEpsilon && !recursivoAEsquerda) {
-					var simboloDaProducao = producao[indiceDoSimboloDaProducao++];
-					if (simboloDaProducao !== this) {
-						antecessoresDerivamEpsilon = simboloDaProducao.derivaEpsilonEmZeroOuMaisPassos();
-					} else {
-						recursivoAEsquerda = true;
-						return;
-					}
+		var recursivoAEsquerda = false;
+		this.producoes.paraCada(function(producao, indiceDaProducao) {
+			var indiceDoSimboloDaProducao = 0;
+			var antecessoresDerivamEpsilon = true;
+			while (indiceDoSimboloDaProducao < producao.length && antecessoresDerivamEpsilon && !recursivoAEsquerda) {
+				var simboloDaProducao = producao[indiceDoSimboloDaProducao++];
+				if (simboloDaProducao !== this) {
+					antecessoresDerivamEpsilon = simboloDaProducao.derivaEpsilonEmZeroOuMaisPassos();
+				} else {
+					recursivoAEsquerda = true;
+					return;
 				}
-			}, this);
-			this.recursivoAEsquerda = recursivoAEsquerda;
-//		}
-		return this.recursivoAEsquerda;
+			}
+		}, this);
+		return recursivoAEsquerda;
 	},
 	
 	/**
@@ -699,22 +693,33 @@ var NaoTerminal = new Prototipo({
 	* Descrição: verifica se o não terminal deriva & em zero ou mais passos.
 	**/
 	derivaEpsilonEmZeroOuMaisPassos: function() {
-		return (!Utilitarios.nuloOuIndefinido(this.fornecerFirsts()["&"]));
-	},
-	
-	/**
-	* Função: derivaEpsilonEmUmPasso
-	* Descrição: verifica se o não terminal deriva & em um passo.
-	**/
-	derivaEpsilonEmUmPasso: function() {
-		var derivaEpsilon = false;
-		this.producoes.paraCada(function(producao, indiceDaProducao) {
-			if (producao.length === 1 && producao[0].epsilon()) {
-				derivaEpsilon = true;
-				return;
-			}
-		});
-		return (derivaEpsilon || this.derivaEpsilonEmZeroOuMaisPassos());
+		var derivaEpsilon = !Utilitarios.nuloOuIndefinido(this.fornecerFirsts()["&"]);
+		if (!derivaEpsilon) {
+			this.producoes.paraCada(function(producao, indiceDaProducao) {
+				if (producao.length === 1 && producao[0].epsilon()) {
+					derivaEpsilon = true;
+					return;
+				}
+			});
+		}
+		if (!derivaEpsilon && !this.verificandoSeDerivaEpsilon) {
+			this.verificandoSeDerivaEpsilon = true;
+			this.producoes.paraCada(function(producao, indiceDaProducao) {
+				var producaoDerivaEpsilon = true;
+				producao.paraCada(function(simboloDaProducao, indiceDoSimboloDaProducao) {
+					if (!simboloDaProducao.derivaEpsilonEmZeroOuMaisPassos()) {
+						producaoDerivaEpsilon = false;
+						return;
+					}
+				});
+				if (producaoDerivaEpsilon) {
+					derivaEpsilon = true;
+					return;
+				}
+			});
+			this.verificandoSeDerivaEpsilon = false;
+		}
+		return derivaEpsilon;
 	},
 	
 	/**
@@ -775,14 +780,6 @@ var Terminal = new Prototipo({
 	**/
 	derivaEpsilonEmZeroOuMaisPassos: function() {
 		return this.epsilon();
-	},
-	
-	/**
-	* Função: derivaEpsilonEmUmPasso
-	* Descrição: verifica se o terminal deriva & em um passo.
-	**/
-	derivaEpsilonEmUmPasso: function() {
-		return false;
 	},
 	
 	/**
