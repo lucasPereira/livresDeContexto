@@ -22,6 +22,7 @@ var Gramatica = new Prototipo({
 		this.firsts = {};
 		this.follows = {};
 		this.tabelaDeParsing = {};
+		this.tabelaDeParsingComIndices = {};
 		this.fatorada = false;
 		this.recursivaAEsquerda = true;
 		this.interseccaoDosFirstsEFollowsVazia = false;
@@ -85,6 +86,14 @@ var Gramatica = new Prototipo({
 	**/
 	fornecerTabelaDeParsing: function() {
 		return this.tabelaDeParsing;
+	},
+	
+	/**
+	* Função: fornecerTabelaDeParsingComIndices
+	* Descrição: retorna a tabela de parsing da gramática.
+	**/
+	fornecerTabelaDeParsingComIndices: function() {
+		return this.tabelaDeParsingComIndices;
 	},
 	
 	/**
@@ -186,6 +195,7 @@ var Gramatica = new Prototipo({
 		this.calcularFirsts();
 		this.calcularFollows();
 		this.construirTabelaDeParsing();
+		this.construirTabelaDeParsingComIndices();
 		this.possuiRecursaoAEsquerda();
 		this.estaFatorada();
 		this.possuiIntersecaoDosFirstsEFollowsVaiza();
@@ -263,6 +273,43 @@ var Gramatica = new Prototipo({
 						this.tabelaDeParsing[simboloDoNaoTerminal][simboloDoFollowDoNaoTerminal].push(producao);
 					}, this);
 				}
+			}, this);
+		}, this);
+	},
+	
+	/**
+	* Função: construirTabelaDeParsingComIndices
+	* Descrição: constrói a tabela de parsing LL(1) da gramática com o indíces das produções
+	* ao invés das produções.
+	**/
+	construirTabelaDeParsingComIndices: function() {
+		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
+			this.tabelaDeParsingComIndices[simboloDoNaoTerminal] = {};
+			this.terminais.paraCada(function(terminal, simboloDoTerminal) {
+				if (!terminal.epsilon()) {
+					this.tabelaDeParsingComIndices[simboloDoNaoTerminal][simboloDoTerminal] = [];
+				}
+			}, this);
+		}, this);
+		var indiceDaProducaoNaGramatica = 1;
+		this.naoTerminais.paraCada(function(naoTerminal, simboloDoNaoTerminal) {
+			naoTerminal.fornecerProducoes().paraCada(function(producao, indiceDaProducao) {
+				var indice = 0;
+				var firstsAvaliados = [];
+				do {
+					producao[indice].fornecerFirsts().paraCada(function(firstDaProducao, simboloDoFirstDaProducao) {
+						if (!firstDaProducao.epsilon() && !firstsAvaliados.contem(simboloDoFirstDaProducao)) {
+							firstsAvaliados.push(simboloDoFirstDaProducao);
+							this.tabelaDeParsingComIndices[simboloDoNaoTerminal][simboloDoFirstDaProducao].push(indiceDaProducaoNaGramatica); 
+						} 
+					}, this);
+				} while (producao[indice++].derivaEpsilonEmZeroOuMaisPassos() && indice < producao.length);
+				if (indice === producao.length && producao[--indice].derivaEpsilonEmZeroOuMaisPassos()) {
+					naoTerminal.fornecerFollows().paraCada(function(followDoNaoTerminal, simboloDoFollowDoNaoTerminal) {
+						this.tabelaDeParsingComIndices[simboloDoNaoTerminal][simboloDoFollowDoNaoTerminal].push(indiceDaProducaoNaGramatica);
+					}, this);
+				}
+				indiceDaProducaoNaGramatica++;
 			}, this);
 		}, this);
 	},

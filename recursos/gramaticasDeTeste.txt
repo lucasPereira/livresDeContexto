@@ -4,7 +4,7 @@ D -> D b | F G
 E -> e | &
 F -> f | &
 G -> g | &
-BUG : Firsts, derivaEpsilon (corrigido)
+BUG: calcularFirsts, derivaEpsilon (corrigido).
 --
 
 --
@@ -32,7 +32,7 @@ V -> v V | &
 C -> b CLL | CL
 CL -> com CL | &
 CLL -> K V ; C e CL | C e CL
-BUG? Tabela de parsing (corrigido)
+BUG: construirTabelaDeParsing (corrigido).
 --
 
 --
@@ -74,7 +74,7 @@ F -> ( E ) | id
 
 S -> D b
 D -> D c | &
-BUG: Firsts (corrigido)
+BUG: calcularFirsts (corrigido).
 
 
 PROG -> DECL COM

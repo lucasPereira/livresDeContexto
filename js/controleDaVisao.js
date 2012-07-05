@@ -9,7 +9,7 @@ var ControleDaVisao = {
 	* Descrição: cria um nova gramática vazia.
 	**/
 	criarGramatica: function() {
-		var listaDeGramaticas = ControleDaVisao.elemento("listaDeGramaticas");
+		var listaDeGramaticas = ControleDaVisao.elemento("listaGramaticas");
 		var itemDeListaDaGramatica = document.createElement("li");
 		var campoDeTextoNomeDaGramatica = document.createElement("input");
 		itemDeListaDaGramatica.appendChild(campoDeTextoNomeDaGramatica);
@@ -63,7 +63,7 @@ var ControleDaVisao = {
 	**/
 	salvarGramatica: function() {
 		var nomeDaGramatica = ControleDaVisao.gramaticaSelecionada;
-		var gramaticaFoiSalva = ControleDoModelo.salvarGramatica(nomeDaGramatica, ControleDaVisao.elemento("codigoDaGramatica").value);
+		var gramaticaFoiSalva = ControleDoModelo.salvarGramatica(nomeDaGramatica, ControleDaVisao.elemento("areaDeTextoCodigoDaGramatica").value);
 		if (gramaticaFoiSalva) {
 			ControleDaVisao.mostrarMensagem("sucesso", "Gramática <strong>" + nomeDaGramatica + "</strong> salva.");
 			ControleDaVisao.mostrarGramatica(nomeDaGramatica);
@@ -77,9 +77,9 @@ var ControleDaVisao = {
 	* Descrição: verifica se uma dada gramática reconhece uma determinada sentença.
 	**/
 	reconhecerSentenca: function() {
-		var sentenca = ControleDaVisao.elemento("campoSentenca").value;
+		var sentenca = ControleDaVisao.elemento("campoDeTextoSentencaAReconhecer").value;
 		var resposta = ControleDoModelo.reconhecerSentenca(ControleDaVisao.gramaticaSelecionada, sentenca);
-		var resultadoDoReconhecimento = ControleDaVisao.elemento("resultadoDoReconhecimento");
+		var resultadoDoReconhecimento = ControleDaVisao.elemento("textoReconhecimento");
 		if (sentenca === "") {
 			sentenca = "ε";
 		}
@@ -105,7 +105,7 @@ var ControleDaVisao = {
 	* Descrição: mostra todas as gramáticas na lista de gramáticas.
 	**/
 	mostrarGramaticas: function() {
-		var listaDeGramaticas = ControleDaVisao.elemento("listaDeGramaticas");
+		var listaDeGramaticas = ControleDaVisao.elemento("listaGramaticas");
 		listaDeGramaticas.innerHTML = "";
 		var gramaticas = ControleDoModelo.fornecerGramaticas();
 		gramaticas.paraCada(function(gramatica, nomeDaGramatica) {
@@ -136,24 +136,25 @@ var ControleDaVisao = {
 	* Descrição: mostra a gramática e seus detalhes.
 	**/
 	mostrarGramatica: function(nomeDaGramatica) {
-		ControleDaVisao.elemento("campoSentenca").value = "";
-		ControleDaVisao.elemento("campoSentenca").setAttribute("value", "");
-		ControleDaVisao.elemento("resultadoDoReconhecimento").setAttribute("class", "");
-		ControleDaVisao.elemento("resultadoDoReconhecimento").innerHTML = "Resultado do reconhecimento da sentença.";
+		ControleDaVisao.elemento("campoDeTextoSentencaAReconhecer").value = "";
+		ControleDaVisao.elemento("campoDeTextoSentencaAReconhecer").setAttribute("value", "");
+		ControleDaVisao.elemento("textoReconhecimento").setAttribute("class", "");
+		ControleDaVisao.elemento("textoReconhecimento").innerHTML = "Resultado do reconhecimento da sentença.";
 		var itemDeListaDaGramaticaAntiga = ControleDaVisao.elemento(ControleDaVisao.gramaticaSelecionada);
 		if (!Utilitarios.nuloOuIndefinido(itemDeListaDaGramaticaAntiga)) {
 			itemDeListaDaGramaticaAntiga.setAttribute("class", "");
 		}
 		var itemDeListaDaGramatica = ControleDaVisao.elemento(nomeDaGramatica);
 		if (Utilitarios.nuloOuIndefinido(itemDeListaDaGramatica)) {
-			itemDeListaDaGramatica = ControleDaVisao.elemento("listaDeGramaticas").firstChild;
+			itemDeListaDaGramatica = ControleDaVisao.elemento("listaGramaticas").firstChild;
 		}
 		if (!Utilitarios.nuloOuIndefinido(itemDeListaDaGramatica)) {
 			itemDeListaDaGramatica.setAttribute("class", "selecionado");
 			var gramatica = ControleDoModelo.fornecerGramaticas()[nomeDaGramatica];
 			ControleDaVisao.gramaticaSelecionada = itemDeListaDaGramatica.innerHTML;
-			ControleDaVisao.elemento("codigoDaGramatica").setAttribute("value", gramatica.fornecerCodigo());
-			ControleDaVisao.elemento("codigoDaGramatica").value = gramatica.fornecerCodigo();
+			ControleDaVisao.elemento("tituloNomeDaGramatica").innerHTML = gramatica.fornecerNome();
+			ControleDaVisao.elemento("areaDeTextoCodigoDaGramatica").setAttribute("value", gramatica.fornecerCodigo());
+			ControleDaVisao.elemento("areaDeTextoCodigoDaGramatica").value = gramatica.fornecerCodigo();
 			ControleDaVisao.mostrarFirsts(gramatica);
 			ControleDaVisao.mostrarFollows(gramatica);
 			ControleDaVisao.mostrarDetalhesDaGramatica(gramatica);
@@ -169,8 +170,13 @@ var ControleDaVisao = {
 	* Descrição: mostra a tabela de parsing da gramática fornecida.
 	**/
 	mostrarTabelaDeParsing: function(gramatica) {
-		var tabelaDeParsing = gramatica.fornecerTabelaDeParsing();
-		var tabela = ControleDaVisao.elemento("tabelaDeParsing");
+		var tabelaDeParsing;
+		if (ControleDaVisao.elemento("caixaDeMarcacaoMostrarIndicesDasProducoes").checked) {
+			tabelaDeParsing = gramatica.fornecerTabelaDeParsingComIndices();
+		} else {
+			tabelaDeParsing = gramatica.fornecerTabelaDeParsing();
+		}
+		var tabela = ControleDaVisao.elemento("tabelaTabelaDeParsing");
 		tabela.innerHTML = "";
 		var cabecalho = document.createElement("thead");
 		var corpo = document.createElement("tbody");
@@ -211,8 +217,8 @@ var ControleDaVisao = {
 	**/
 	mostrarInformacaoDaConstrucaoDaTabelaDeParsing: function(gramatica) {
 		if (gramatica.codigoVazio()) {
-			ControleDaVisao.elemento("estadoDaTabelaDeParsing").setAttribute("class", "");
-			ControleDaVisao.elemento("estadoDaTabelaDeParsing").innerHTML = "Resultado da construção da tabela de parsing.";
+			ControleDaVisao.elemento("textoTabelaDeParsing").setAttribute("class", "");
+			ControleDaVisao.elemento("textoTabelaDeParsing").innerHTML = "Resultado da construção da tabela de parsing.";
 		} else {
 			var mensagemFatorada = (gramatica.fatorada) ? "" : "não está fatorada";
 			var mensagemRecursivaAEsquerda = (gramatica.recursivaAEsquerda) ? "possui recursão à esquerda" : "";
@@ -232,12 +238,12 @@ var ControleDaVisao = {
 				mensagemSobreATabelaDeParsing += "Não foi possível construir a tabela de parsing sem não determinismos. ";
 				mensagemSobreATabelaDeParsing += "A gramática não pode ser análisada pela técnica LL(1) pois, ";
 				mensagemSobreATabelaDeParsing += mensagemFatorada + mensagemRecursivaAEsquerda + mensagemInterseccaoDosFirstsEFollowsVazia + ".";
-				ControleDaVisao.elemento("estadoDaTabelaDeParsing").setAttribute("class", "rejeita");
+				ControleDaVisao.elemento("textoTabelaDeParsing").setAttribute("class", "rejeita");
 			} else {
 				mensagemSobreATabelaDeParsing = "A tabela de parsing foi construída com sucesso.";
-				ControleDaVisao.elemento("estadoDaTabelaDeParsing").setAttribute("class", "aceita");
+				ControleDaVisao.elemento("textoTabelaDeParsing").setAttribute("class", "aceita");
 			}
-			ControleDaVisao.elemento("estadoDaTabelaDeParsing").innerHTML = mensagemSobreATabelaDeParsing;
+			ControleDaVisao.elemento("textoTabelaDeParsing").innerHTML = mensagemSobreATabelaDeParsing;
 		}
 	},
 	
@@ -251,9 +257,9 @@ var ControleDaVisao = {
 		var mensagemFatorada = (gramatica.fatorada) ? "Sim" : "Não";
 		var mensagemRecursivaAEsquerda = (gramatica.recursivaAEsquerda) ? "Sim" : "Não";
 		var mensagemInterseccaoDosFirstsEFollowsVazia = (gramatica.interseccaoDosFirstsEFollowsVazia) ? "Sim" : "Não";
-		ControleDaVisao.elemento("gramaticaFatorada").innerHTML = mensagemFatorada;
-		ControleDaVisao.elemento("gramaticaComRecursaoAEsquerda").innerHTML = mensagemRecursivaAEsquerda;
-		ControleDaVisao.elemento("gramaticaFirstInterseccaoFollowVazia").innerHTML = mensagemInterseccaoDosFirstsEFollowsVazia;
+		ControleDaVisao.elemento("colunaGramaticaFatorada").innerHTML = mensagemFatorada;
+		ControleDaVisao.elemento("colunaGramaticaComRecursaoAEsquerda").innerHTML = mensagemRecursivaAEsquerda;
+		ControleDaVisao.elemento("colunaGramaticaComInterseccaoDeFirstsEFollowsVazia").innerHTML = mensagemInterseccaoDosFirstsEFollowsVazia;
 	},
 	
 	/**
@@ -263,12 +269,13 @@ var ControleDaVisao = {
 	* Descrição: mostra os frists da gramática.
 	**/
 	mostrarFirsts: function(gramatica) {
-		var listaDeFirsts = ControleDaVisao.elemento("listaDeFirsts");
-		listaDeFirsts.innerHTML = "";
+		var listaDeFirsts = ControleDaVisao.elemento("tabelaFirstsDaGramatica");
+		listaDeFirsts.innerHTML = "<caption>Frists</caption>";
 		var firsts = gramatica.fornecerFirsts();
 		firsts.paraCada(function(firstsDoSimbolo, chaveDoSimbolo) {
-			var tituloSimbolo = document.createElement("dt");
-			var descricaoFirsts = document.createElement("dd");
+			var linhaDoFirst = document.createElement("tr");
+			var tituloSimbolo = document.createElement("th");
+			var descricaoFirsts = document.createElement("td");
 			tituloSimbolo.innerHTML = chaveDoSimbolo;
 			var firstsComoTexto = "";
 			firstsDoSimbolo.paraCada(function(simboloFirst, chaveDoSimboloFirst) {
@@ -276,8 +283,9 @@ var ControleDaVisao = {
 			});
 			firstsComoTexto = "{ " + firstsComoTexto.substring(0, firstsComoTexto.length - 2) + " }";
 			descricaoFirsts.innerHTML = firstsComoTexto;
-			listaDeFirsts.appendChild(tituloSimbolo);
-			listaDeFirsts.appendChild(descricaoFirsts);
+			linhaDoFirst.appendChild(tituloSimbolo);
+			linhaDoFirst.appendChild(descricaoFirsts);
+			listaDeFirsts.appendChild(linhaDoFirst);
 		});
 	},
 	
@@ -288,12 +296,13 @@ var ControleDaVisao = {
 	* Descrição: mostra os follows da gramática.
 	**/
 	mostrarFollows: function(gramatica) {
-		var listaDeFollows = ControleDaVisao.elemento("listaDeFollows");
-		listaDeFollows.innerHTML = "";
+		var listaDeFollows = ControleDaVisao.elemento("tabelaFollowsDaGramatica");
+		listaDeFollows.innerHTML = "<caption>Follows</caption>";
 		var follows = gramatica.fornecerFollows();
 		follows.paraCada(function(followsDoSimbolo, chaveDoSimbolo) {
-			var tituloSimbolo = document.createElement("dt");
-			var descricaoFollows = document.createElement("dd");
+			var linhaDoFollow = document.createElement("tr");
+			var tituloSimbolo = document.createElement("th");
+			var descricaoFollows = document.createElement("td");
 			tituloSimbolo.innerHTML = chaveDoSimbolo;
 			var followsComoTexto = "";
 			followsDoSimbolo.paraCada(function(simboloFollow, chaveDoSimboloFollow) {
@@ -301,8 +310,9 @@ var ControleDaVisao = {
 			});
 			followsComoTexto = "{ " + followsComoTexto.substring(0, followsComoTexto.length - 2) + " }";
 			descricaoFollows.innerHTML = followsComoTexto;
-			listaDeFollows.appendChild(tituloSimbolo);
-			listaDeFollows.appendChild(descricaoFollows);
+			linhaDoFollow.appendChild(tituloSimbolo);
+			linhaDoFollow.appendChild(descricaoFollows);
+			listaDeFollows.appendChild(linhaDoFollow);
 		});
 	},
 	
@@ -336,7 +346,7 @@ var ControleDaVisao = {
 	* Descrição: mostra na tela a mensagem especificada pelo parâmetro mensagem.
 	**/
 	mostrarMensagem: function(tipoDeMensagem, mensagem) {
-		var caixaDeMensagens = ControleDaVisao.elemento("caixaDeMensagens");
+		var caixaDeMensagens = ControleDaVisao.elemento("textoMensagemDoSistema");
 		window.clearTimeout(ControleDaVisao.temporizadorDaCaixaDeMensagens);
 		ControleDaVisao.temporizadorDaCaixaDeMensagens = window.setTimeout(ControleDaVisao.limparMensagem, 8000);
 		caixaDeMensagens.setAttribute("class", tipoDeMensagem);
@@ -349,7 +359,8 @@ var ControleDaVisao = {
 	* Descrição: limpa o campo de exibição de mensagens.
 	**/
 	limparMensagem: function() {
-		ControleDaVisao.elemento("caixaDeMensagens").setAttribute("class", "");
+		ControleDaVisao.elemento("textoMensagemDoSistema").setAttribute("class", "");
+		ControleDaVisao.elemento("textoMensagemDoSistema").innerHTML = "";
 		window.clearTimeout(ControleDaVisao.temporizadorDaCaixaDeMensagens);
 	},
 	
@@ -370,7 +381,10 @@ var ControleDaVisao = {
 		ControleDaVisao.elemento("botaoCriarGramatica").onclick = ControleDaVisao.criarGramatica;
 		ControleDaVisao.elemento("botaoExcluirGramatica").onclick = ControleDaVisao.excluirGramatica;
 		ControleDaVisao.elemento("botaoReconhecerSentenca").onclick = ControleDaVisao.reconhecerSentenca;
-		ControleDaVisao.elemento("caixaDeMensagens").onclick = ControleDaVisao.limparMensagem;
+		ControleDaVisao.elemento("caixaDeMarcacaoMostrarIndicesDasProducoes").onclick = function() {
+			ControleDaVisao.mostrarTabelaDeParsing(ControleDoModelo.fornecerGramatica(ControleDaVisao.gramaticaSelecionada));
+		};
+		ControleDaVisao.elemento("textoMensagemDoSistema").onclick = ControleDaVisao.limparMensagem;
 		if (ControleDoModelo.criarGramatica("minhaGramatica")) {
 			ControleDaVisao.gramaticaSelecionada = "minhaGramatica";
 			ControleDaVisao.mostrarGramaticas();

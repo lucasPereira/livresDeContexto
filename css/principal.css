@@ -43,6 +43,15 @@ h1 {
 	color: #48C;
 	font-size: 30px;
 	font-weight: bold;
+	margin-bottom: 20px;
+}
+
+h2,
+caption {
+	color: #247;
+	font-size: 20px;
+	font-weight: bold;
+	margin-bottom: 20px;
 }
 
 input[type="text"],
@@ -50,8 +59,10 @@ textarea {
 	background-color: #FFC;
 	border-color: #EEE;
 	border-width: 1px;
+	color: #555;
+	font-size: 20px;
 	padding: 10px;
-	width: 150px;
+	width: 400px;
 }
 
 input[type="text"]:focus,
@@ -64,244 +75,18 @@ p strong {
 	font-weight: bold;
 }
 
-p {
+p,
+label {
 	color: #555;
 }
 
 p.aceita {
-/* 	color: #7A7; */
 	color: #070;
 }
 
 p.rejeita {
 	color: #A77;
 	color: #E00;
-}
-
-.navegacaoDeGramaticas {
-	display: box;
-	display: -webkit-box;
-	display: -moz-box;
-	display: -o-box;
-	display: -ms-box;
-	box-align: start;
-	-webkit-box-align: start;
-	-moz-box-align: start;
-	-o-box-align: start;
-	-ms-box-align: start;
-	box-direction: reverse;
-	-webkit-box-direction: reverse;
-	-moz-box-direction: reverse;
-	-o-box-direction: reverse;
-	-ms-box-direction: reverse;
-	box-orient: vertical;
-	-webkit-box-orient: vertical;
-	-moz-box-orient: vertical;
-	-o-box-orient: vertical;
-	-ms-box-orient: vertical;
-}
-
-.navegacaoDeGramaticas ul {
-	margin-top: 20px;	
-}
-
-.navegacaoDeGramaticas ul li {
-	padding: 10px;
-}
-
-.navegacaoDeGramaticas ul li,
-.navegacaoDeGramaticas ul li input {
-	background-color: #EEE;
-	border-color: #888;
-	border-bottom-width: 1px;
-	color: #888;
-	display: block;
-	width: 150px;
-}
-
-.navegacaoDeGramaticas ul li input {
-	background-color: #FFF;
-	border-color: #F00;
-	border-width: 1px;
-}
-
-.navegacaoDeGramaticas ul li:hover {
-	background-color: #FFC;
-	cursor: pointer;
-}
-
-.navegacaoDeGramatica {
-	margin-top: 20px;
-}
-
-.navegacaoDeGramatica button:first-child {
-	margin-left: 0;
-}
-
-.navegacaoDeGramatica button {
-	margin-left: 10px;
-}
-
-.secaoDaGramatica {
-	margin-left: 100px;
-	box-flex: 1; 
-	-webkit-box-flex: 1;
-	-moz-box-flex: 1;
-	-o-box-flex: 1;
-	-ms-box-flex: 1;
-}
-
-.secaoDaGramatica h1 {
-	margin-bottom: 20px;
-}
-
-.secaoDaGramatica section h1 {
-	font-size: 20px;
-	margin-bottom: 20px;
-}
-
-.secaoDaGramatica section h2 {
-	color: #247;
-	font-size: 15px;
-	font-weight: bold;
-	margin-top: 20px;
-	margin-bottom: 20px;
-}
-
-dl#listaDeFirsts,
-dl#listaDeFollows {
-	width: 180px;
-}
-
-dl#listaDeFirsts dt,
-dl#listaDeFollows dt {
-	text-align: center;
-	width: 50px;
-}
-
-dl#listaDeFirsts dd,
-dl#listaDeFollows dd {
-	color: #247;
-}
-
-dl#listaDeFirsts dd strong,
-dl#listaDeFollows dd strong {
-	font-weight: bold;
-}
-
-dl#listaDeFirsts dd strong {
-	color: #7A7;
-}
-
-dl#listaDeFollows dd strong {
-	color: #A77;
-}
-
-.secaoDaGramatica dl dt {
-	background-color: #89A;
-	color: #FFF;
-	float: left;
-	font-weight: bold;
-	margin-right: 10px;
-	padding: 5px;
-	width: 300px;
-}
-
-.secaoDaGramatica dl dd {
-	padding: 5px;
-	margin-bottom: 3px;
-}
-
-.containerDaGramatica {
-	border-color: #89A;
-	border-width: 2px 0;
-	display: box;
-	display: -webkit-box;
-	display: -moz-box;
-	display: -o-box;
-	display: -ms-box;
-	box-pack: start;
-	-webkit-box-pack: start;
-	-moz-box-pack: start;
-	-o-box-pack: start;
-	-ms-box-pack: start;
-	box-orient: horizontal;
-	-webkit-box-orient: horizontal;
-	-moz-box-orient: horizontal;
-	-o-box-orient: horizontal;
-	-ms-box-orient: horizontal;
-	margin: 30px 0;
-	padding: 30px 0;
-}
-
-section > section + section {
-	border-color: #89A;
-	border-width: 2px 0;
-	margin: 30px 0;
-	padding: 30px 0;
-}
-
-.containerDaGramatica section {
-	-webkit-box-flex: 1;
-	margin-left: 50px;
-}
-
-.containerDaGramatica section:first-child {
-	margin-left: 0;
-}
-
-.containerFirstEFollow {
-	display: box;
-	display: -webkit-box;
-	display: -moz-box;
-	display: -o-box;
-	display: -ms-box;
-	box-pack: start;
-	-webkit-box-pack: start;
-	-moz-box-pack: start;
-	-o-box-pack: start;
-	-ms-box-pack: start;
-	box-orient: horizontal;
-	-webkit-box-orient: horizontal;
-	-moz-box-orient: horizontal;
-	-o-box-orient: horizontal;
-	-ms-box-orient: horizontal;
-}
-
-.containerFirstEFollow h2 {
-	clear: both;
-}  
-
-.containerGlobal {
-	display: box;
-	display: -webkit-box;
-	display: -moz-box;
-	display: -o-box;
-	display: -ms-box;
-	box-align: stretch;
-	-webkit-box-align: stretch;
-	-moz-box-align: stretch;
-	-o-box-align: stretch;
-	-ms-box-align: stretch;
-	box-orient: horizontal;
-	-webkit-box-orient: horizontal;
-	-moz-box-orient: horizontal;
-	-o-box-orient: horizontal;
-	-ms-box-orient: horizontal;
-	margin: 20px;
-}
-
-.mensagemDoSistema {
-	position: absolute;
-	right: 0;
-	text-align: right;
-	top: 0;
-	width: 400px;
-}
-
-.mensagemDoSistema p {
-	display: none;
-	margin-top: 20px;
 }
 
 p.sucesso {
@@ -319,39 +104,260 @@ p.informativo {
 	color: #00A;
 }
 
-#codigoDaGramatica {
-	font-size: 20px;
-	font-family: "Courier New", monospace;
-	height: 300px;
-	width: 500px;
-}
-
-#listaDeGramaticas li.selecionado {
-	color: #777;
-	font-weight: bold;
+body {
+    display: box;
+	display: -webkit-box;
+	display: -moz-box;
+	display: -o-box;
+	display: -ms-box;
+	
+	height:100%;
+	width:100%;
 }
 
 table {
 	border-collapse: separate;
 	border-spacing: 2px;
-	margin-top: 20px;
-	width: 100%;
-}
-
-table td,
-table th {
-	border: #000 1px;
-	padding: 5px;
-	text-align: center;
-}
-
-table td {
-	background-color: #EEE;
-	color: #888;
 }
 
 table th {
 	background-color: #89A;
 	color: #FFF;
 	font-weight: bold;
+	padding: 5px;
 }
+
+table td {
+	color: #247;
+	padding-left: 10px;
+}
+
+#conteinerGlobal {
+	box-flex: 1;
+	-webkit-box-flex: 1;
+	-moz-box-flex: 1;
+	-o-box-flex: 1;
+	-ms-box-flex: 1;
+	
+	box-align: stretch;
+	-webkit-box-align: stretch;
+	-moz-box-align: stretch;
+	-o-box-align: stretch;
+	-ms-box-align: stretch;
+	
+	box-orient: horizontal;
+	-webkit-box-orient: horizontal;
+	-moz-box-orient: horizontal;
+	-o-box-orient: horizontal;
+	-ms-box-orient: horizontal;
+	
+	display: box;
+	display: -webkit-box;
+	display: -moz-box;
+	display: -o-box;
+	display: -ms-box;
+
+	margin: 20px;
+}
+
+#navegacaoGramaticas {
+	box-flex: 0; 
+	-webkit-box-flex: 0;
+	-moz-box-flex: 0;
+	-o-box-flex: 0;
+	-ms-box-flex: 0;
+	
+	box-align: start;
+	-webkit-box-align: start;
+	-moz-box-align: start;
+	-o-box-align: start;
+	-ms-box-align: start;
+	
+	box-orient: vertical;
+	-webkit-box-orient: vertical;
+	-moz-box-orient: vertical;
+	-o-box-orient: vertical;
+	-ms-box-orient: vertical;
+	
+	display: box;
+	display: -webkit-box;
+	display: -moz-box;
+	display: -o-box;
+	display: -ms-box;
+}
+
+#navegacaoGramaticas > #listaGramaticas {
+	margin-top: 20px;	
+}
+
+#navegacaoGramaticas > #listaGramaticas > li {
+	padding: 10px;
+}
+
+#navegacaoGramaticas > #listaGramaticas > li.selecionado {
+	color: #777;
+	font-weight: bold;
+}
+
+#navegacaoGramaticas > #listaGramaticas > li,
+#navegacaoGramaticas > #listaGramaticas > li > input {
+	background-color: #EEE;
+	border-color: #888;
+	border-bottom-width: 1px;
+	color: #888;
+	display: block;
+	width: 150px;
+}
+
+#navegacaoGramaticas > #listaGramaticas > li > input {
+	background-color: #FFF;
+	border-color: #F00;
+	border-width: 1px;
+}
+
+#navegacaoGramaticas > #listaGramaticas > li:hover {
+	background-color: #FFC;
+	cursor: pointer;
+}
+
+#secaoGramatica {
+	box-flex: 1; 
+	-webkit-box-flex: 1;
+	-moz-box-flex: 1;
+	-o-box-flex: 1;
+	-ms-box-flex: 1;
+	
+	margin-left: 50px;
+}
+
+#secaoGramatica > #conteinerEdicaoEAnalise {
+	border-color: #89A;
+	border-width: 2px 0;
+
+	box-orient: horizontal;
+	-webkit-box-orient: horizontal;
+	-moz-box-orient: horizontal;
+	-o-box-orient: horizontal;
+	-ms-box-orient: horizontal;
+	
+	display: box;
+	display: -webkit-box;
+	display: -moz-box;
+	display: -o-box;
+	display: -ms-box;
+	
+	margin: 30px 0;
+	padding: 30px 0;	
+}
+
+#secaoGramatica > #conteinerEdicaoEAnalise > #secaoEdicao {
+	box-flex: 0; 
+	-webkit-box-flex: 0;
+	-moz-box-flex: 0;
+	-o-box-flex: 0;
+	-ms-box-flex: 0;
+}
+
+#secaoGramatica > #conteinerEdicaoEAnalise > #secaoEdicao > #areaDeTextoCodigoDaGramatica {
+	color: #555;
+	font-size: 20px;
+	font-family: "Courier New", monospace;
+	height: 300px;
+	width: 500px;
+}
+
+#secaoGramatica > #conteinerEdicaoEAnalise > #secaoEdicao > #navegacaoEdicao {
+	margin-top: 20px;
+}
+
+#secaoGramatica > #conteinerEdicaoEAnalise > #secaoAnalise {
+	box-flex: 1; 
+	-webkit-box-flex: 1;
+	-moz-box-flex: 1;
+	-o-box-flex: 1;
+	-ms-box-flex: 1;
+	
+	margin-left: 50px;
+}
+
+#secaoGramatica > #conteinerEdicaoEAnalise > #secaoAnalise > #conteinerFirstsEFollows {
+	box-orient: horizontal;
+	-webkit-box-orient: horizontal;
+	-moz-box-orient: horizontal;
+	-o-box-orient: horizontal;
+	-ms-box-orient: horizontal;
+
+	box-pack: justify;
+	-webkit-box-pack: justify;
+	-moz-box-pack: justify;
+	-o-box-pack: justify;
+	-ms-box-pack: justify;
+
+	display: box;
+	display: -webkit-box;
+	display: -moz-box;
+	display: -o-box;
+	display: -ms-box;
+}
+
+#secaoGramatica > #conteinerEdicaoEAnalise > #secaoAnalise > #conteinerFirstsEFollows > #tabelaFollowsDaGramatica {
+	margin-left: 30px;
+}
+
+#secaoGramatica > #conteinerEdicaoEAnalise > #secaoAnalise > #conteinerFirstsEFollows > #tabelaFirstsDaGramatica strong {
+	color: #7A7;
+	font-weight: bold;
+}
+
+#secaoGramatica > #conteinerEdicaoEAnalise > #secaoAnalise > #conteinerFirstsEFollows > #tabelaFollowsDaGramatica strong {
+	color: #A77;
+	font-weight: bold;
+}
+
+#secaoGramatica > #secaoTabelaDeParsing > #tabelaTabelaDeParsing {
+	margin: 10px 0;
+	width: 100%;
+}
+
+#secaoGramatica > #secaoTabelaDeParsing > #tabelaTabelaDeParsing tr > td,
+#secaoGramatica > #secaoTabelaDeParsing > #tabelaTabelaDeParsing tr > th {
+	padding: 5px;
+	text-align: center;
+}
+
+#secaoGramatica > #secaoTabelaDeParsing > #tabelaTabelaDeParsing tr > td {
+	background-color: #EEE;
+	color: #888;
+}
+
+#secaoGramatica > #secaoTabelaDeParsing > #tabelaTabelaDeParsing tr > th {
+	background-color: #89A;
+	color: #FFF;
+	font-weight: bold;
+}
+
+#secaoGramatica > #secaoReconhecimento {
+	border-color: #89A;
+	border-width: 2px 0;
+	margin: 30px 0;
+	padding: 30px 0;
+}
+
+#secaoGramatica > #secaoReconhecimento > input {
+	margin-bottom: 20px;
+}
+
+#secaoMensagemDoSistema {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 500px;
+}
+
+#secaoMensagemDoSistema > h1 {
+	text-align: right;
+}
+
+#secaoMensagemDoSistema #textoMensagemDoSistema {
+	text-align: right;
+}	

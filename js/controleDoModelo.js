@@ -64,6 +64,17 @@ var ControleDoModelo = {
 	},
 	
 	/**
+	* Função: fornecerGramatica
+	* Parâmetros:
+	* - nome: nome da gramática que se deseja obter.
+	* Descrição: fornecer a gramática que possui o nome fornecido.
+	**/
+	fornecerGramatica: function(nome) {
+		Utilitarios.assegureQue(Utilitarios.instanciaDe(nome, String));
+		return Gramaticas[nome];
+	},
+	
+	/**
 	* Função: reconhecerSentenca
 	* Parâmetros:
 	* - nomeDaGramatica: nome da gramática que efetuará o reconhecimento.
