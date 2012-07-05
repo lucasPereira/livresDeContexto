@@ -487,8 +487,10 @@ var NaoTerminal = new Prototipo({
 		this.producoes = [];
 		this.firsts = null;
 		this.follows = null;
+		this.recursivoAEsquerda = false;
 		this.receptoresDosFirsts = {};
 		this.verificandoSeDerivaEpsilon = false;
+		this.calculandoFirsts = false;
 	},
 	
 	/**
@@ -563,6 +565,7 @@ var NaoTerminal = new Prototipo({
 	**/
 	calcularFirsts: function(receptorDosFirsts) {
 		if (Utilitarios.nulo(this.firsts)) {
+			this.calculandoFirsts = true;
 			this.firsts = {};
 			this.producoes.paraCada(function(producao, indiceDaProducao) {
 				var indiceDoSimbolo = 0;
@@ -584,8 +587,12 @@ var NaoTerminal = new Prototipo({
 					}
 			}, this);
 			this.propagarFirsts();
+			this.calculandoFirsts = false;
 		} else {
 			this.receptoresDosFirsts[receptorDosFirsts.simbolo] = receptorDosFirsts;
+			if (this.calculandoFirsts) {
+				this.recursivoAEsquerda = true;
+			}
 		}
 		return this.firsts;
 	},
@@ -695,21 +702,22 @@ var NaoTerminal = new Prototipo({
 	* Descrição: verifica se o símbolo não terminal possui recursão à esquerda
 	**/
 	possuiRecursaoAEsquerda: function() {
-		var recursivoAEsquerda = false;
-		this.producoes.paraCada(function(producao, indiceDaProducao) {
-			var indiceDoSimboloDaProducao = 0;
-			var antecessoresDerivamEpsilon = true;
-			while (indiceDoSimboloDaProducao < producao.length && antecessoresDerivamEpsilon && !recursivoAEsquerda) {
-				var simboloDaProducao = producao[indiceDoSimboloDaProducao++];
-				if (simboloDaProducao !== this) {
-					antecessoresDerivamEpsilon = simboloDaProducao.derivaEpsilonEmZeroOuMaisPassos();
-				} else {
-					recursivoAEsquerda = true;
-					return;
+		if (!this.recursivoAEsquerda) {
+			this.producoes.paraCada(function(producao, indiceDaProducao) {
+				var indiceDoSimboloDaProducao = 0;
+				var antecessoresDerivamEpsilon = true;
+				while (indiceDoSimboloDaProducao < producao.length && antecessoresDerivamEpsilon && !this.recursivoAEsquerda) {
+					var simboloDaProducao = producao[indiceDoSimboloDaProducao++];
+					if (simboloDaProducao !== this) {
+						antecessoresDerivamEpsilon = simboloDaProducao.derivaEpsilonEmZeroOuMaisPassos();
+					} else {
+						this.recursivoAEsquerda = true;
+						return;
+					}
 				}
-			}
-		}, this);
-		return recursivoAEsquerda;
+			}, this);
+		}
+		return this.recursivoAEsquerda;
 	},
 	
 	/**
