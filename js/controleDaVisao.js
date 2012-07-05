@@ -98,6 +98,7 @@ var ControleDaVisao = {
 				resultadoDoReconhecimento.innerHTML = "Não é possível efetuar o reconhecimento da sentença pois a gramática não pode ser análisada pela técnica LL(1).";
 			}
 		}
+		resultadoDoReconhecimento.scrollIntoView();
 	},
 	
 	/**
