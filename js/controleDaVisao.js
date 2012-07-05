@@ -269,8 +269,10 @@ var ControleDaVisao = {
 	* Descrição: mostra os frists da gramática.
 	**/
 	mostrarFirsts: function(gramatica) {
-		var listaDeFirsts = ControleDaVisao.elemento("tabelaFirstsDaGramatica");
+		var listaDeFirsts = document.createElement("table");
 		listaDeFirsts.innerHTML = "<caption>Frists</caption>";
+		ControleDaVisao.elemento("conteinerFirstsEFollows").replaceChild(listaDeFirsts, ControleDaVisao.elemento("tabelaFirstsDaGramatica"));
+		listaDeFirsts.setAttribute("id", "tabelaFirstsDaGramatica");
 		var firsts = gramatica.fornecerFirsts();
 		firsts.paraCada(function(firstsDoSimbolo, chaveDoSimbolo) {
 			var linhaDoFirst = document.createElement("tr");
@@ -296,8 +298,10 @@ var ControleDaVisao = {
 	* Descrição: mostra os follows da gramática.
 	**/
 	mostrarFollows: function(gramatica) {
-		var listaDeFollows = ControleDaVisao.elemento("tabelaFollowsDaGramatica");
+		var listaDeFollows = document.createElement("table");
 		listaDeFollows.innerHTML = "<caption>Follows</caption>";
+		ControleDaVisao.elemento("conteinerFirstsEFollows").replaceChild(listaDeFollows, ControleDaVisao.elemento("tabelaFollowsDaGramatica"));
+		listaDeFollows.setAttribute("id", "tabelaFollowsDaGramatica");
 		var follows = gramatica.fornecerFollows();
 		follows.paraCada(function(followsDoSimbolo, chaveDoSimbolo) {
 			var linhaDoFollow = document.createElement("tr");
